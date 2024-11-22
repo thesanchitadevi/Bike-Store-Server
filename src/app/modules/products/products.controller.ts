@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { getProductServices } from './products.services';
+import productValidationSchema from './products.validation';
+import { z } from 'zod';
 
 /* Controller functions for the product module  */
 
@@ -7,7 +9,12 @@ import { getProductServices } from './products.services';
 const createProduct = async (req: Request, res: Response) => {
   try {
     const product = req.body;
-    const newProduct = await getProductServices.createProductDB(product);
+    // const newProduct = await getProductServices.createProductDB(product);
+
+    // Validated the product data
+    const validatedProduct = productValidationSchema.parse(product);
+    const newProduct =
+      await getProductServices.createProductDB(validatedProduct);
 
     res.status(201).json({
       message: 'Bike created successfully',
@@ -15,20 +22,40 @@ const createProduct = async (req: Request, res: Response) => {
       data: newProduct,
     });
   } catch (error: any) {
-    // Specific handling for known errors (e.g. validation errors)
-    if (error.name === 'ValidationError') {
+    // If validation fails, Zod will throw an error
+    if (error instanceof z.ZodError) {
+      // Map the Zod error to the exact structure you need
+      const validationErrors = error.errors.reduce((acc: any, err: any) => {
+        acc[err.path[0]] = {
+          message: err.message, // Error message
+          name: 'ValidationError', // The name of the error
+          properties: {
+            // Additional details about the error
+            message: err.message,
+            type: err.code === 'too_small' ? 'min' : err.code, // Zod's validation error type, e.g., 'min' or 'invalid_type'
+            min: err.minimum || undefined,
+          },
+          kind: err.code === 'too_small' ? 'min' : err.code, // Validation kind (e.g., 'min' for minimum value errors)
+          path: err.path[0], // Path (field name like 'price')
+          value: req.body[err.path[0]], // The value that was invalid
+        };
+        return acc;
+      }, {});
+
       res.status(400).json({
-        status: false,
-        message: 'Validation error',
-        error: error.message,
+        message: 'Validation failed',
+        success: false,
+        error: validationErrors, // Return the detailed error structure
+        stack: process.env.NODE_ENV === 'development' ? error.stack : null, // Show stack trace
       });
     }
 
     // General error handling
     res.status(500).json({
-      status: false,
       message: 'Error in creating Bike',
+      success: false,
       error: error.message || 'An unknown error occurred',
+      stack: process.env.NODE_ENV === 'development' ? error.stack : null,
     });
   }
 };
@@ -60,12 +87,16 @@ const getAllProducts = async (req: Request, res: Response) => {
       data: allProducts,
     });
   } catch (error: any) {
-    // Specific handling for known errors
+    // Specific handling for known errors (e.g. validation errors)
     if (error.name === 'ValidationError') {
       res.status(400).json({
-        status: false,
-        message: 'Validation error',
-        error: error.message,
+        message: 'Validation failed',
+        success: false,
+        error: {
+          name: error.name,
+          errors: error.errors, // Include the full error object with details like message, properties, etc.
+        },
+        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
     }
     // General error handling
@@ -85,11 +116,7 @@ const getProduct = async (req: Request, res: Response) => {
     const product = await getProductServices.getProductDB(productId);
     // Handle case where the product is not found
     if (!product) {
-      res.status(404).json({
-        status: false,
-        message: 'Bike not found',
-      });
-      return;
+      throw new Error('Resource not found');
     }
 
     res.status(200).json({
@@ -98,13 +125,18 @@ const getProduct = async (req: Request, res: Response) => {
       data: product,
     });
   } catch (error: any) {
-    // Specific error handling for known errors
-    if (error.name === 'ValidationError') {
-      res.status(400).json({
-        status: false,
-        message: 'Validation error',
-        error: error.message,
+    // If the error is "Resource not found"
+    if (error.message === 'Resource not found') {
+      res.status(404).json({
+        message: 'Resource not found',
+        success: false,
+        error: {
+          name: 'NotFoundError',
+          message: 'The requested resource could not be found',
+        },
+        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
+      return;
     }
     // General error handling f
     res.status(500).json({
@@ -119,35 +151,53 @@ const getProduct = async (req: Request, res: Response) => {
 const updateProduct = async (req: Request, res: Response) => {
   try {
     const productId = req.params.productId;
+
     const updatedProduct = await getProductServices.updateProductDB(
       productId,
-      req.body,
+      req,
     );
     // Handle case where the product is not found
     if (!updatedProduct) {
-      res.status(404).json({ status: false, message: 'Bike not found' });
-      return;
+      throw new Error('Resource not found');
     }
+
     res.status(200).json({
       status: true,
       message: 'Bike updated successfully',
       data: updatedProduct,
     });
   } catch (error: any) {
-    // Specific error handling for known errors
-    if (error.name === 'ValidationError') {
+    // If validation fails, Zod will throw an error
+    if (error) {
       res.status(400).json({
-        status: false,
-        message: 'Validation error',
-        error: error.message,
+        message: 'Validation failed',
+        success: false,
+        error: {
+          name: 'ValidationError',
+          message: error.message,
+        },
+        stack: process.env.NODE_ENV === 'development' ? error.stack : null, // Show stack trace
+      });
+    }
+    // Handle "Resource not found" error
+    if (error.message === 'Resource not found') {
+      res.status(404).json({
+        message: 'Resource not found',
+        success: false,
+        error: {
+          name: 'NotFoundError',
+          message: 'The requested resource could not be found',
+        },
+        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
     }
 
     // General error handling
     res.status(500).json({
       status: false,
-      message: 'Error updating the bike',
+      message: 'An error occurred while updating the bike',
       error: error.message || 'An unknown error occurred',
+      stack: process.env.NODE_ENV === 'development' ? error.stack : null,
     });
   }
 };
@@ -158,29 +208,30 @@ const deleteProduct = async (req: Request, res: Response) => {
   try {
     const deletedProduct = await getProductServices.deleteProductDB(productId);
 
+    // Handle case where the product is not found
     if (!deletedProduct) {
-      res.status(404).json({
-        message: 'Bike not found',
-        status: false,
-        data: {},
-      });
-      return;
+      throw new Error('Resource not found');
     }
+
     res.status(200).json({
       message: 'Bike deleted successfully',
       status: true,
       data: {},
     });
   } catch (error: any) {
-    // Specific error handling for known errors
-    if (error.name === 'ValidationError') {
-      res.status(400).json({
+    // If the error is "Resource not found"
+    if (error.message === 'Resource not found') {
+      res.status(404).json({
+        message: 'Resource not found',
         success: false,
-        message: 'Validation error',
-        error: error.message,
+        error: {
+          name: 'NotFoundError',
+          message: 'The requested resource could not be found',
+        },
+        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
+      return;
     }
-
     // General error handling
     res.status(500).json({
       success: false,
