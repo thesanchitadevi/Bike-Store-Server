@@ -33,6 +33,23 @@ const getProductDB = async (productId: string) => {
   return result;
 };
 
+const updateProductDB = async (
+  productId: string,
+  updateData: any,
+  options: any = {},
+) => {
+  try {
+    const updatedProduct = await ProductModel.findByIdAndUpdate(
+      productId, // Find product by ID
+      updateData, // Update the product with the provided data
+      { new: true, ...options }, // Option to return the updated document
+    );
+    return updatedProduct;
+  } catch (error) {
+    throw new Error('Error updating product');
+  }
+};
+
 // const deleteProductDB = async (id: string) => {
 //   const result = await ProductModel.updateOne({ id }, { isDeleted: true });
 //   return result;
@@ -42,4 +59,5 @@ export const getProductServices = {
   createProductDB,
   getAllProductsDB,
   getProductDB,
+  updateProductDB,
 };

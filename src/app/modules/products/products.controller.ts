@@ -78,6 +78,29 @@ const getProduct = async (req: Request, res: Response) => {
     });
   }
 };
+
+// Function to update product details
+const updateProduct = async (req: Request, res: Response) => {
+  try {
+    const productId = req.params.productId;
+    const updatedProduct = await getProductServices.updateProductDB(
+      productId,
+      req.body,
+    );
+    if (!updatedProduct) {
+      res.status(404).json({ status: false, message: 'Product not found' });
+      return;
+    }
+    res.status(200).json({
+      status: true,
+      message: 'Bike updated successfully',
+      data: updatedProduct,
+    });
+  } catch (error) {
+    res.status(500).json({ status: false, message: 'Server Error' });
+  }
+};
+
 // const deleteProduct = async (req: Request, res: Response) => {
 //   try {
 //     const id = req.params.id;
@@ -100,4 +123,5 @@ export const productController = {
   createProduct,
   getAllProducts,
   getProduct,
+  updateProduct,
 };
