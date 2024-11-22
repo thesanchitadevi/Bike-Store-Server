@@ -1,5 +1,3 @@
-import { Schema, model, connect, Model } from 'mongoose';
-
 // Product interface
 export interface IProduct {
   name: string;
@@ -9,6 +7,4 @@ export interface IProduct {
   description: string;
   quantity: number;
   inStock: boolean;
-  //   createdAt: Date;
-  //   updatedAt: Date;
 }

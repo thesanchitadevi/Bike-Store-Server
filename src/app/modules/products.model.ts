@@ -13,7 +13,7 @@ const productSchema = new Schema<IProduct>(
     inStock: { type: Boolean, required: true },
   },
   {
-    timestamps: true,
+    timestamps: true, // Add timestamps for createdAt and updatedAt
   },
 );
 

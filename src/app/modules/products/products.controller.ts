@@ -1,78 +1,115 @@
 import { Request, Response } from 'express';
 import { getProductServices } from './products.services';
 
-// Create a Controller.
+/* Controller functions for the product module  */
+
+// Function to create a new product
 const createProduct = async (req: Request, res: Response) => {
   try {
     const product = req.body;
-
     const result = await getProductServices.createProductDB(product);
 
-    res.status(200).json({
+    res.status(201).json({
       message: 'Bike created successfully',
-      success: true,
+      status: true,
       data: result,
     });
   } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Error in creating Product',
-      error: error,
-    });
-
-    // Specific handling for known errors (optional)
+    // Specific handling for known errors (e.g. validation errors)
     if (error.name === 'ValidationError') {
       res.status(400).json({
-        success: false,
+        status: false,
         message: 'Validation error',
         error: error.message,
       });
-    } else {
-      res.status(500).json({
-        success: false,
-        message: error.message || 'Error in creating Product',
-        error: error,
-      });
     }
+
+    // General error handling
+    res.status(500).json({
+      status: false,
+      message: 'Error in creating Bike',
+      error: error.message || 'An unknown error occurred',
+    });
   }
 };
 
+// Function to get all products
 const getAllProducts = async (req: Request, res: Response) => {
   try {
-    const { searchTerm } = req.query; // Get the searchTerm from the query string
+    // Get the searchTerm from the query string
+    const { searchTerm } = req.query;
+    // Check if the searchTerm is a string
     const searchTermString =
       typeof searchTerm === 'string' ? searchTerm : undefined;
+
     const result = await getProductServices.getAllProductsDB(searchTermString);
 
+    // Handle case where no products are found
+    if (!result || result.length === 0) {
+      res.status(404).json({
+        status: false,
+        message: 'No bikes found',
+      });
+      return;
+    }
+
     res.status(200).json({
-      success: true,
+      status: true,
       message: 'Bikes retrieved successfully',
       data: result,
     });
   } catch (error: any) {
+    // Specific handling for known errors
+    if (error.name === 'ValidationError') {
+      res.status(400).json({
+        status: false,
+        message: 'Validation error',
+        error: error.message,
+      });
+    }
+    // General error handling
     res.status(500).json({
-      success: false,
-      message: 'Error in getAllProducts',
-      error: error.message,
+      status: false,
+      message: 'Error retrieving bikes',
+      error: error.message || 'An unknown error occurred',
     });
   }
 };
 
+// Function to get a product by ID
 const getProduct = async (req: Request, res: Response) => {
   try {
     const productId = req.params.productId;
-    // console.log('Product ID:', productId);
+
     const result = await getProductServices.getProductDB(productId);
+    // Handle case where the product is not found
+    if (!result) {
+      res.status(404).json({
+        status: false,
+        message: 'Bike not found',
+      });
+      return;
+    }
+
     res.status(200).json({
-      success: true,
+      status: true,
       message: 'Bike retrieved successfully',
       data: result,
     });
   } catch (error: any) {
+    // Specific error handling for known errors
+    if (error.name === 'ValidationError') {
+      res.status(400).json({
+        status: false,
+        message: 'Validation error',
+        error: error.message,
+      });
+    }
+    // General error handling f
     res.status(500).json({
-      success: false,
-      message: 'Cannot get the product',
-      error: error.message,
+      status: false,
+      message: 'Error retrieving the bike',
+      error: error.message || 'An unknown error occurred',
     });
   }
 };
@@ -85,8 +122,9 @@ const updateProduct = async (req: Request, res: Response) => {
       productId,
       req.body,
     );
+    // Handle case where the product is not found
     if (!updatedProduct) {
-      res.status(404).json({ status: false, message: 'Product not found' });
+      res.status(404).json({ status: false, message: 'Bike not found' });
       return;
     }
     res.status(200).json({
@@ -94,11 +132,26 @@ const updateProduct = async (req: Request, res: Response) => {
       message: 'Bike updated successfully',
       data: updatedProduct,
     });
-  } catch (error) {
-    res.status(500).json({ status: false, message: 'Server Error' });
+  } catch (error: any) {
+    // Specific error handling for known errors
+    if (error.name === 'ValidationError') {
+      res.status(400).json({
+        status: false,
+        message: 'Validation error',
+        error: error.message,
+      });
+    }
+
+    // General error handling
+    res.status(500).json({
+      status: false,
+      message: 'Error updating the bike',
+      error: error.message || 'An unknown error occurred',
+    });
   }
 };
 
+// Function to delete a product from the database
 const deleteProduct = async (req: Request, res: Response) => {
   const productId = req.params.productId;
   try {
@@ -110,7 +163,7 @@ const deleteProduct = async (req: Request, res: Response) => {
         status: false,
         data: {},
       });
-      return; // Exit the function after sending the response
+      return;
     }
     res.status(200).json({
       message: 'Bike deleted successfully',
@@ -118,14 +171,25 @@ const deleteProduct = async (req: Request, res: Response) => {
       data: {},
     });
   } catch (error: any) {
+    // Specific error handling for known errors
+    if (error.name === 'ValidationError') {
+      res.status(400).json({
+        success: false,
+        message: 'Validation error',
+        error: error.message,
+      });
+    }
+
+    // General error handling
     res.status(500).json({
       success: false,
-      message: 'Error in deleteStudent',
-      error: error.message,
+      message: 'Error deleting the bike',
+      error: error.message || 'An unknown error occurred',
     });
   }
 };
 
+// Export the controller functions
 export const productController = {
   createProduct,
   getAllProducts,

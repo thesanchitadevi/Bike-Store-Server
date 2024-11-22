@@ -10,8 +10,10 @@ app.use(express.json());
 app.use(cors());
 
 // application routes
+// Product routes
 app.use('/api/products', ProductRouter);
 
+// Default route
 const getController = (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
