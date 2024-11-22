@@ -6,8 +6,8 @@ import { IProduct } from './products.interface';
 // Create a new product in the database
 const createProductDB = async (productData: IProduct) => {
   try {
-    const result = await ProductModel.create(productData);
-    return result;
+    const newProduct = await ProductModel.create(productData);
+    return newProduct;
   } catch (error) {
     throw new Error('Failed to create bike. Please try again later.');
   }
@@ -28,8 +28,8 @@ const getAllProductsDB = async (searchTerm?: string) => {
       };
     }
 
-    const result = await ProductModel.find(filter);
-    return result;
+    const allProducts = await ProductModel.find(filter);
+    return allProducts;
   } catch (error) {
     throw new Error('Error retrieving bikes from the database');
   }
@@ -38,8 +38,8 @@ const getAllProductsDB = async (searchTerm?: string) => {
 // Get a single product from the database
 const getProductDB = async (productId: string) => {
   try {
-    const result = await ProductModel.findOne({ _id: productId });
-    return result;
+    const product = await ProductModel.findOne({ _id: productId });
+    return product;
   } catch (error) {
     throw new Error('Bike not found');
   }
@@ -66,10 +66,10 @@ const updateProductDB = async (
 // Delete a product from the database
 const deleteProductDB = async (productId: string) => {
   try {
-    const deletedBike = await ProductModel.findByIdAndDelete({
+    const deletedproduct = await ProductModel.findByIdAndDelete({
       _id: productId,
     });
-    return deletedBike; // If bike is not found, this will return null
+    return deletedproduct; // If bike is not found, this will return null
   } catch (error) {
     throw new Error('Error deleting bike');
   }

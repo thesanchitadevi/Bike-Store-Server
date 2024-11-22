@@ -7,12 +7,12 @@ import { getProductServices } from './products.services';
 const createProduct = async (req: Request, res: Response) => {
   try {
     const product = req.body;
-    const result = await getProductServices.createProductDB(product);
+    const newProduct = await getProductServices.createProductDB(product);
 
     res.status(201).json({
       message: 'Bike created successfully',
       status: true,
-      data: result,
+      data: newProduct,
     });
   } catch (error: any) {
     // Specific handling for known errors (e.g. validation errors)
@@ -42,10 +42,11 @@ const getAllProducts = async (req: Request, res: Response) => {
     const searchTermString =
       typeof searchTerm === 'string' ? searchTerm : undefined;
 
-    const result = await getProductServices.getAllProductsDB(searchTermString);
+    const allProducts =
+      await getProductServices.getAllProductsDB(searchTermString);
 
     // Handle case where no products are found
-    if (!result || result.length === 0) {
+    if (!allProducts || allProducts.length === 0) {
       res.status(404).json({
         status: false,
         message: 'No bikes found',
@@ -56,7 +57,7 @@ const getAllProducts = async (req: Request, res: Response) => {
     res.status(200).json({
       status: true,
       message: 'Bikes retrieved successfully',
-      data: result,
+      data: allProducts,
     });
   } catch (error: any) {
     // Specific handling for known errors
@@ -81,9 +82,9 @@ const getProduct = async (req: Request, res: Response) => {
   try {
     const productId = req.params.productId;
 
-    const result = await getProductServices.getProductDB(productId);
+    const product = await getProductServices.getProductDB(productId);
     // Handle case where the product is not found
-    if (!result) {
+    if (!product) {
       res.status(404).json({
         status: false,
         message: 'Bike not found',
@@ -94,7 +95,7 @@ const getProduct = async (req: Request, res: Response) => {
     res.status(200).json({
       status: true,
       message: 'Bike retrieved successfully',
-      data: result,
+      data: product,
     });
   } catch (error: any) {
     // Specific error handling for known errors
@@ -155,9 +156,9 @@ const updateProduct = async (req: Request, res: Response) => {
 const deleteProduct = async (req: Request, res: Response) => {
   const productId = req.params.productId;
   try {
-    const result = await getProductServices.deleteProductDB(productId);
+    const deletedProduct = await getProductServices.deleteProductDB(productId);
 
-    if (!result) {
+    if (!deletedProduct) {
       res.status(404).json({
         message: 'Bike not found',
         status: false,
