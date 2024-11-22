@@ -11,8 +11,8 @@ const createProduct = async (req: Request, res: Response) => {
     console.log('result', result);
 
     res.status(200).json({
-      success: true,
       message: 'Bike created successfully',
+      success: true,
       data: result,
     });
   } catch (error: any) {
