@@ -4,8 +4,6 @@ import { IProduct } from './products.interface';
 // services are used to interact with the database
 const createProductDB = async (productData: IProduct) => {
   const result = await ProductModel.create(productData);
-  console.log('result', result);
-
   return result;
 };
 
@@ -14,9 +12,10 @@ const getAllProductsDB = async () => {
   return result;
 };
 
-// const getProductDB = async (id: string) => {
-//     const result = await ProductModel.findOne({ id });
-// };
+const getProductDB = async (productId: string) => {
+  const result = await ProductModel.findOne({ productId });
+  return result;
+};
 
 // const deleteProductDB = async (id: string) => {
 //   const result = await ProductModel.updateOne({ id }, { isDeleted: true });
@@ -26,4 +25,5 @@ const getAllProductsDB = async () => {
 export const getProductServices = {
   createProductDB,
   getAllProductsDB,
+  getProductDB,
 };

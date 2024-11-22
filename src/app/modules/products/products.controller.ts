@@ -12,13 +12,13 @@ const createProduct = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: 'Product created successfully',
+      message: 'Bike created successfully',
       data: result,
     });
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: error.message || 'Error in createProduct',
+      message: error.message || 'Error in creating Product',
       error: error,
     });
 
@@ -32,7 +32,7 @@ const createProduct = async (req: Request, res: Response) => {
     } else {
       res.status(500).json({
         success: false,
-        message: error.message || 'Error in createProduct',
+        message: error.message || 'Error in creating Product',
         error: error,
       });
     }
@@ -44,7 +44,7 @@ const getAllProducts = async (req: Request, res: Response) => {
     const result = await getProductServices.getAllProductsDB();
     res.status(200).json({
       success: true,
-      message: 'All Products fetched successfully',
+      message: 'Bikes retrieved successfully',
       data: result,
     });
   } catch (error: any) {
@@ -56,23 +56,23 @@ const getAllProducts = async (req: Request, res: Response) => {
   }
 };
 
-// const getProduct = async (req: Request, res: Response) => {
-//   try {
-//     const id = req.params.id;
-//     const result = await getProductServices.getProductDB(id);
-//     res.status(200).json({
-//       success: true,
-//       message: 'Product fetched successfully',
-//       data: result,
-//     });
-//   } catch (error: any) {
-//     res.status(500).json({
-//       success: false,
-//       message: 'Error in getProduct',
-//       error: error.message,
-//     });
-//   }
-// };
+const getProduct = async (req: Request, res: Response) => {
+  try {
+    const productId = req.params.id;
+    const result = await getProductServices.getProductDB(productId);
+    res.status(200).json({
+      success: true,
+      message: 'Bike retrieved successfully',
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: 'Error in getProduct',
+      error: error.message,
+    });
+  }
+};
 // const deleteProduct = async (req: Request, res: Response) => {
 //   try {
 //     const id = req.params.id;
@@ -94,4 +94,5 @@ const getAllProducts = async (req: Request, res: Response) => {
 export const productController = {
   createProduct,
   getAllProducts,
+  getProduct,
 };
