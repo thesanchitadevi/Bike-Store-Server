@@ -62,7 +62,8 @@ const getAllProducts = async (req: Request, res: Response) => {
 
 const getProduct = async (req: Request, res: Response) => {
   try {
-    const productId = req.params.id;
+    const productId = req.params.productId;
+    // console.log('Product ID:', productId);
     const result = await getProductServices.getProductDB(productId);
     res.status(200).json({
       success: true,
@@ -72,7 +73,7 @@ const getProduct = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: 'Error in getProduct',
+      message: 'Cannot get the product',
       error: error.message,
     });
   }

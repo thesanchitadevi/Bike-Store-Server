@@ -29,7 +29,7 @@ const getAllProductsDB = async (searchTerm?: string) => {
 };
 
 const getProductDB = async (productId: string) => {
-  const result = await ProductModel.findOne({ productId });
+  const result = await ProductModel.findOne({ _id: productId });
   return result;
 };
 
