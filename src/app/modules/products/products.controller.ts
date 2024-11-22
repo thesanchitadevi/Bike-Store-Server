@@ -5,10 +5,8 @@ import { getProductServices } from './products.services';
 const createProduct = async (req: Request, res: Response) => {
   try {
     const product = req.body;
-    console.log('product', product);
 
     const result = await getProductServices.createProductDB(product);
-    console.log('result', result);
 
     res.status(200).json({
       message: 'Bike created successfully',
@@ -101,27 +99,37 @@ const updateProduct = async (req: Request, res: Response) => {
   }
 };
 
-// const deleteProduct = async (req: Request, res: Response) => {
-//   try {
-//     const id = req.params.id;
-//     const result = await getProductServices.deleteProductDB(id);
-//     res.status(200).json({
-//       success: true,
-//       message: 'Product deleted successfully',
-//       data: result,
-//     });
-//   } catch (error: any) {
-//     res.status(500).json({
-//       success: false,
-//       message: 'Error in deleteProduct',
-//       error: error.message,
-//     });
-//   }
-// };
+const deleteProduct = async (req: Request, res: Response) => {
+  const productId = req.params.productId;
+  try {
+    const result = await getProductServices.deleteProductDB(productId);
+
+    if (!result) {
+      res.status(404).json({
+        message: 'Bike not found',
+        status: false,
+        data: {},
+      });
+      return; // Exit the function after sending the response
+    }
+    res.status(200).json({
+      message: 'Bike deleted successfully',
+      status: true,
+      data: {},
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: 'Error in deleteStudent',
+      error: error.message,
+    });
+  }
+};
 
 export const productController = {
   createProduct,
   getAllProducts,
   getProduct,
   updateProduct,
+  deleteProduct,
 };

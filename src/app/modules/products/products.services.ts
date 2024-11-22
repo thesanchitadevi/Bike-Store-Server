@@ -40,7 +40,7 @@ const updateProductDB = async (
 ) => {
   try {
     const updatedProduct = await ProductModel.findByIdAndUpdate(
-      productId, // Find product by ID
+      { _id: productId }, // Find product by ID
       updateData, // Update the product with the provided data
       { new: true, ...options }, // Option to return the updated document
     );
@@ -50,14 +50,23 @@ const updateProductDB = async (
   }
 };
 
-// const deleteProductDB = async (id: string) => {
-//   const result = await ProductModel.updateOne({ id }, { isDeleted: true });
-//   return result;
-// };
+const deleteProductDB = async (productId: string) => {
+  try {
+    // Delete the bike from the database
+    const deletedBike = await ProductModel.findByIdAndDelete({
+      _id: productId,
+    });
+    return deletedBike; // If bike is not found, this will return null
+  } catch (error) {
+    console.error('Error deleting bike:', error);
+    throw error;
+  }
+};
 
 export const getProductServices = {
   createProductDB,
   getAllProductsDB,
   getProductDB,
   updateProductDB,
+  deleteProductDB,
 };
