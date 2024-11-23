@@ -4,12 +4,12 @@ The Bike-Store project is a backend application built with Express.js, Mongoose,
 
 # Features
 
-- Product Management: CRUD operations for managing products, such as bikes and accessories.
-- Order Management: Handle customer orders efficiently with structured endpoints.
-- Data Validation: Utilizes Mongoose custom validation for strong schema enforcement.
-- Environment Configuration: Manages secrets securely using dotenv.
-- Scalable Design: Built with modular architecture for extensibility.
-- Code Quality: Maintained using ESLint, Prettier, and TypeScript.
+- _Product Management_: CRUD operations for managing products, such as bikes and accessories.
+- _Order Management_: Handle customer orders efficiently with structured endpoints.
+- _Data Validation_: Utilizes Mongoose custom validation for strong schema enforcement.
+- _Environment Configuration_: Manages secrets securely using dotenv.
+- _Scalable Design_: Built with modular architecture for extensibility.
+- _Code Quality_: Maintained using ESLint, Prettier, and TypeScript.
 
 ## API Endpoints
 
@@ -17,20 +17,69 @@ The API includes the following routes (replace localhost:5000 with your deployed
 
 ### Product Routes (/api/products)
 
-- GET /api/products - Retrieve all products.
-- POST /api/products - Add a new product.
-- PUT /api/products/:productId - Update a product's details.
-- DELETE /api/products/:productId - Delete a product.
+- **GET** `/api/products` - Retrieve all products.
+- **POST** `/api/products` - Add a new product.
+- **GET** `/api/products/:productId` - Retrieve a product's details.
+- **PUT** `/api/products/:productId` - Update a product's details.
+- **DELETE** `/api/products/:productId` - Delete a product.
 
 ### Order Routes (/api/orders)
 
-- GET /api/orders/revenue - The total revenue from all orders.
-- POST /api/orders - Place a new order.
+- **GET** `/api/orders/revenue` - The total revenue from all orders.
+- **POST** `/api/orders` - Place a new order.
 
 ## Technologies Used
 
-- Backend Framework: Express.js
-- Database: MongoDB with Mongoose ORM
-- Language: TypeScript
-- Validation: Mongoose Custom Validation
-- Code Quality Tools: ESLint, Prettier
+- Backend Framework: **_Express.js_**
+- Database: **_MongoDB with Mongoose ORM_**
+- Language: **_TypeScript_**
+- Validation: **_Mongoose Custom Validation_**
+- Code Quality Tools: **_ESLint, Prettier_**
+
+## Setup
+
+~ Initialize the Node.js project: `npm init -y`
+~ Install Required Packages:
+\*\*\* Install Express.js for routing: `npm install express --save`
+\*\*\* Install Mongoose for MongoDB: `npm install mongoose --save`
+\*\*\* Install TypeScript: `npm install typescript --save-dev`
+\*\*\* Install TypeScript Compiler: `npm install tsc --save-dev`
+\*\*\* Install TypeScript for Node.js: `npm install @types/node --save-dev`
+\*\*\* Install ESLint: `npm install eslint --save-dev`
+\*\*\* Install Prettier: `npm install prettier --save-dev`
+\*\*\* Install dotenv for environment variables: `npm install dotenv --save`
+\*\*\* Install ts-node for running TypeScript: `npm install ts-node --save-dev`
+\*\*\* Install nodemon for auto-reloading: `npm install nodemon --save-dev`
+\*\*\* Install TypeScript for Mongoose: `npm install @types/mongoose --save-dev`
+\*\*\* Install CORS for cross-origin resource sharing: `npm i cors`
+
+## Project Structure
+
+The project structure follows the MVC pattern. The `src` directory contains the following subdirectories and files:
+
+- `app.ts`: Initializes the Express application and configures middleware.
+- `server.ts`: Starts the server and listens on the specified port.
+- `app`: Contains the main application logic.
+  - `config`: Contains configuration files for the application.
+    - `index.ts`: Configuration settings for the application.
+  - `modules`: Contains the different modules of the application.
+    - `products`: Contains the product module.
+    - `orders`: Contains the order module.
+
+## Running the Application
+
+To run the application, execute the following command:
+
+```bash
+npm run dev
+```
+
+The application will run on `http://localhost:5000`.
+
+## Conclusion
+
+The Bike-Store project is a robust backend application that simplifies bike inventory management and customer order processing. It is built with Express.js, Mongoose, and TypeScript, providing a scalable and maintainable solution for bike store owners.
+
+```
+
+```
