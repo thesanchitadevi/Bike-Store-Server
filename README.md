@@ -4,12 +4,12 @@ The Bike-Store project is a backend application built with Express.js, Mongoose,
 
 # Features
 
-- _Product Management_: CRUD operations for managing products, such as bikes and accessories.
-- _Order Management_: Handle customer orders efficiently with structured endpoints.
-- _Data Validation_: Utilizes Mongoose custom validation for strong schema enforcement.
-- _Environment Configuration_: Manages secrets securely using dotenv.
-- _Scalable Design_: Built with modular architecture for extensibility.
-- _Code Quality_: Maintained using ESLint, Prettier, and TypeScript.
+- **_Product Management_**: CRUD operations for managing products, such as bikes and accessories.
+- **_Order Management_**: Handle customer orders efficiently with structured endpoints.
+- **_Data Validation_**: Utilizes Mongoose custom validation for strong schema enforcement.
+- **_Environment Configuration_**: Manages secrets securely using dotenv.
+- **_Scalable Design_**: Built with modular architecture for extensibility.
+- **_Code Quality_**: Maintained using ESLint, Prettier, and TypeScript.
 
 ## API Endpoints
 
@@ -17,16 +17,16 @@ The API includes the following routes (replace localhost:5000 with your deployed
 
 ### Product Routes (/api/products)
 
-- **GET** `/api/products` - Retrieve all products.
-- **POST** `/api/products` - Add a new product.
-- **GET** `/api/products/:productId` - Retrieve a product's details.
-- **PUT** `/api/products/:productId` - Update a product's details.
-- **DELETE** `/api/products/:productId` - Delete a product.
+- _GET_ `/api/products` - Retrieve all products.
+- _POST_ `/api/products` - Add a new product.
+- _GET_ `/api/products/:productId` - Retrieve a product's details.
+- _PUT_ `/api/products/:productId` - Update a product's details.
+- _DELETE_ `/api/products/:productId` - Delete a product.
 
 ### Order Routes (/api/orders)
 
-- **GET** `/api/orders/revenue` - The total revenue from all orders.
-- **POST** `/api/orders` - Place a new order.
+- _GET_ `/api/orders/revenue` - The total revenue from all orders.
+- _POST_ `/api/orders` - Place a new order.
 
 ## Technologies Used
 
@@ -41,16 +41,27 @@ The API includes the following routes (replace localhost:5000 with your deployed
 ~ Initialize the Node.js project: `npm init -y`
 ~ Install Required Packages:
 \*\*\* Install Express.js for routing: `npm install express --save`
+
 \*\*\* Install Mongoose for MongoDB: `npm install mongoose --save`
+
 \*\*\* Install TypeScript: `npm install typescript --save-dev`
+
 \*\*\* Install TypeScript Compiler: `npm install tsc --save-dev`
+
 \*\*\* Install TypeScript for Node.js: `npm install @types/node --save-dev`
+
 \*\*\* Install ESLint: `npm install eslint --save-dev`
+
 \*\*\* Install Prettier: `npm install prettier --save-dev`
+
 \*\*\* Install dotenv for environment variables: `npm install dotenv --save`
+
 \*\*\* Install ts-node for running TypeScript: `npm install ts-node --save-dev`
+
 \*\*\* Install nodemon for auto-reloading: `npm install nodemon --save-dev`
+
 \*\*\* Install TypeScript for Mongoose: `npm install @types/mongoose --save-dev`
+
 \*\*\* Install CORS for cross-origin resource sharing: `npm i cors`
 
 ## Project Structure
