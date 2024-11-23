@@ -13,7 +13,7 @@ The Bike-Store project is a backend application built with Express.js, Mongoose,
 
 ## API Endpoints
 
-The API includes the following routes (replace localhost:5000 with your deployed URL):
+The API includes the following routes :
 
 ### Product Routes (/api/products)
 
@@ -92,7 +92,3 @@ The application will run on `http://localhost:5000`.
 ## Conclusion
 
 The Bike-Store project is a robust backend application that simplifies bike inventory management and customer order processing. It is built with Express.js, Mongoose, and TypeScript, providing a scalable and maintainable solution for bike store owners.
-
-```
-
-```
