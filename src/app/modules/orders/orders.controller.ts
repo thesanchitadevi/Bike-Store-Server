@@ -3,7 +3,8 @@ import { getOrdersServices } from './orders.services';
 
 /* Controller functions for the product module  */
 
-export const placeOrder = async (req: Request, res: Response) => {
+// Function to place an order
+const placeOrder = async (req: Request, res: Response) => {
   try {
     const order = req.body;
     const newOrder = await getOrdersServices.createOrderDB(order);
@@ -39,7 +40,30 @@ export const placeOrder = async (req: Request, res: Response) => {
   }
 };
 
+// Function to get the total revenue
+const getRevenue = async (req: Request, res: Response) => {
+  try {
+    const totalRevenue = await getOrdersServices.calculateTotalRevenue();
+
+    res.status(200).json({
+      message: 'Revenue calculated successfully',
+      status: true,
+      data: {
+        totalRevenue,
+      },
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      message: 'Error calculating revenue',
+      success: false,
+      error: error.message || 'An unknown error occurred',
+      stack: process.env.NODE_ENV === 'development' ? error.stack : null,
+    });
+  }
+};
+
 // Export the controller functions
 export const orderController = {
   placeOrder,
+  getRevenue,
 };
