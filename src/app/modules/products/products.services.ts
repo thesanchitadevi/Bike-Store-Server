@@ -9,7 +9,7 @@ const createProductDB = async (productData: IProduct) => {
     const newProduct = await ProductModel.create(productData);
     return newProduct;
   } catch (error) {
-    throw new Error('Failed to create bike. Please try again later.');
+    throw error;
   }
 };
 
@@ -41,7 +41,7 @@ const getProductDB = async (productId: string) => {
     const product = await ProductModel.findOne({ _id: productId });
     return product;
   } catch (error) {
-    throw new Error('Bike not found');
+    throw error;
   }
 };
 
@@ -59,7 +59,7 @@ const updateProductDB = async (
     );
     return updatedProduct;
   } catch (error) {
-    throw new Error('Error updating bike');
+    throw error;
   }
 };
 
@@ -71,7 +71,7 @@ const deleteProductDB = async (productId: string) => {
     });
     return deletedproduct;
   } catch (error) {
-    throw new Error('Error deleting bike');
+    throw error;
   }
 };
 

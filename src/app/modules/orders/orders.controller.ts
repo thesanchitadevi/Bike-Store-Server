@@ -17,35 +17,55 @@ const placeOrder = async (req: Request, res: Response) => {
       data: newOrder,
     });
   } catch (error: any) {
-    // Handle errors here and send appropriate responses
+    if (error.name === 'ValidationError') {
+      // Map Mongoose validation error to the required structure
+      const validationErrors = Object.keys(error.errors).reduce(
+        (acc: any, key: string) => {
+          const err = error.errors[key];
+          acc[key] = {
+            message: err.message,
+            name: err.name,
+            properties: {
+              message: err.message,
+              type: err.properties.type, // Validation type (e.g., 'required', 'min')
+              min: err.properties.min, // Minimum value (if applicable)
+            },
+            kind: err.kind, // Validation kind (e.g., 'required', 'min')
+            path: err.path, // Path of the field (e.g., 'price')
+            value: req.body[key], // The invalid value
+          };
+          return acc;
+        },
+        {},
+      );
+      // Respond with validation errors
+      res.status(400).json({
+        message: 'Validation failed',
+        success: false,
+        error: {
+          name: error.name,
+          errors: validationErrors,
+        },
+        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
+      });
+    }
+    // Handle "Resource not found" error
     if (error.message === 'Resource not found') {
+      const resourceNotFoundError = {
+        resource: error.resource || 'Unknown Resource',
+        message: error.message || 'Resource not found',
+        name: error.name,
+      };
       res.status(404).json({
         message: 'Resource not found',
         success: false,
         error: {
-          name: 'NotFoundError',
-          message: 'The requested resource could not be found',
+          name: resourceNotFoundError.name,
+          details: resourceNotFoundError,
         },
         stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
-      return;
-    } else if (error.message === 'Insufficient stock') {
-      res.status(400).json({
-        message: 'Insufficient stock for this product',
-        status: false,
-        error: {
-          name: 'BadRequestError',
-          message: 'Insufficient stock for this product',
-        },
-      });
     }
-
-    // Handle general server errors
-    res.status(500).json({
-      message: 'Error creating order',
-      status: false,
-      error: error || 'An unknown error occurred',
-    });
   }
 };
 

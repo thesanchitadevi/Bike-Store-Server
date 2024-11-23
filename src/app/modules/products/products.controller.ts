@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import { getProductServices } from './products.services';
-import productValidationSchema from './products.validation';
-import { z } from 'zod';
 
 /* Controller functions for the product module  */
 
@@ -9,12 +7,7 @@ import { z } from 'zod';
 const createProduct = async (req: Request, res: Response) => {
   try {
     const product = req.body;
-    // const newProduct = await getProductServices.createProductDB(product);
-
-    // Validated the product data
-    const validatedProduct = productValidationSchema.parse(product);
-    const newProduct =
-      await getProductServices.createProductDB(validatedProduct);
+    const newProduct = await getProductServices.createProductDB(product);
 
     res.status(201).json({
       message: 'Bike created successfully',
@@ -22,40 +15,48 @@ const createProduct = async (req: Request, res: Response) => {
       data: newProduct,
     });
   } catch (error: any) {
-    // If validation fails, Zod will throw an error
-    if (error instanceof z.ZodError) {
-      // Map the Zod error
-      const validationErrors = error.errors.reduce((acc: any, err: any) => {
-        acc[err.path[0]] = {
-          message: err.message,
-          name: 'ValidationError',
-          properties: {
+    // Check if the error is a Mongoose validation error
+    if (error.name === 'ValidationError') {
+      // Map Mongoose validation error to the required structure
+      const validationErrors = Object.keys(error.errors).reduce(
+        (acc: any, key: string) => {
+          const err = error.errors[key];
+          acc[key] = {
             message: err.message,
-            type: err.code === 'too_small' ? 'min' : err.code, // Zod's validation error type, e.g., 'min' or 'invalid_type'
-            min: err.minimum || undefined,
-          },
-          kind: err.code === 'too_small' ? 'min' : err.code, // Validation kind (e.g., 'min' for minimum value errors)
-          path: err.path[0], // Path (field name like 'price')
-          value: req.body[err.path[0]], // The value that was invalid
-        };
-        return acc;
-      }, {});
+            name: err.name,
+            properties: {
+              message: err.message,
+              type: err.properties.type, // Validation type (e.g., 'required', 'min')
+              min: err.properties.min, // Minimum value
+            },
+            kind: err.kind, // Validation kind (e.g., 'required', 'min')
+            path: err.path, // Path of the field (e.g., 'price')
+            value: req.body[key], // The invalid value
+          };
+          return acc;
+        },
+        {},
+      );
 
+      // Respond with validation errors
       res.status(400).json({
         message: 'Validation failed',
         success: false,
-        error: validationErrors, // Return the detailed error structure
-        stack: process.env.NODE_ENV === 'development' ? error.stack : null, // Show stack trace
+        error: {
+          name: error.name,
+          errors: validationErrors,
+        },
+        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
+      });
+    } else {
+      // General error handling
+      res.status(500).json({
+        message: 'Error in creating product',
+        success: false,
+        error: error.message || 'An unknown error occurred',
+        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
     }
-
-    // General error handling
-    res.status(500).json({
-      message: 'Error in creating Bike',
-      success: false,
-      error: error.message || 'An unknown error occurred',
-      stack: process.env.NODE_ENV === 'development' ? error.stack : null,
-    });
   }
 };
 
@@ -86,14 +87,34 @@ const getAllProducts = async (req: Request, res: Response) => {
       data: allProducts,
     });
   } catch (error: any) {
-    // Specific handling for known errors (e.g. validation errors)
     if (error.name === 'ValidationError') {
+      // Map Mongoose validation error to the required structure
+      const validationErrors = Object.keys(error.errors).reduce(
+        (acc: any, key: string) => {
+          const err = error.errors[key];
+          acc[key] = {
+            message: err.message,
+            name: err.name,
+            properties: {
+              message: err.message,
+              type: err.properties.type, // Validation type (e.g., 'required', 'min')
+              min: err.properties.min, // Minimum value
+            },
+            kind: err.kind, // Validation kind (e.g., 'required', 'min')
+            path: err.path, // Path of the field (e.g., 'price')
+            value: req.body[key], // The invalid value
+          };
+          return acc;
+        },
+        {},
+      );
+      // Respond with validation errors
       res.status(400).json({
         message: 'Validation failed',
         success: false,
         error: {
           name: error.name,
-          errors: error.errors,
+          errors: validationErrors,
         },
         stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
@@ -166,14 +187,34 @@ const updateProduct = async (req: Request, res: Response) => {
       data: updatedProduct,
     });
   } catch (error: any) {
-    // If validation fails, Zod will throw an error
-    if (error) {
+    if (error.name === 'ValidationError') {
+      // Map Mongoose validation error to the required structure
+      const validationErrors = Object.keys(error.errors).reduce(
+        (acc: any, key: string) => {
+          const err = error.errors[key];
+          acc[key] = {
+            message: err.message,
+            name: err.name,
+            properties: {
+              message: err.message,
+              type: err.properties.type, // Validation type (e.g., 'required', 'min')
+              min: err.properties.min, // Minimum value (if applicable)
+            },
+            kind: err.kind, // Validation kind (e.g., 'required', 'min')
+            path: err.path, // Path of the field (e.g., 'price')
+            value: req.body[key], // The invalid value
+          };
+          return acc;
+        },
+        {},
+      );
+      // Respond with validation errors
       res.status(400).json({
         message: 'Validation failed',
         success: false,
         error: {
-          name: 'ValidationError',
-          message: error.message,
+          name: error.name,
+          errors: validationErrors,
         },
         stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
