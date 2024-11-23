@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { getOrdersServices } from './orders.services';
+import mongoose from 'mongoose';
 
 /* Controller functions for the product module  */
 
@@ -7,6 +8,7 @@ import { getOrdersServices } from './orders.services';
 const placeOrder = async (req: Request, res: Response) => {
   try {
     const order = req.body;
+
     const newOrder = await getOrdersServices.createOrderDB(order);
 
     res.status(201).json({
@@ -37,6 +39,13 @@ const placeOrder = async (req: Request, res: Response) => {
         },
       });
     }
+
+    // Handle general server errors
+    res.status(500).json({
+      message: 'Error creating order',
+      status: false,
+      error: error || 'An unknown error occurred',
+    });
   }
 };
 
