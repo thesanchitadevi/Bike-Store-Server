@@ -69,7 +69,7 @@ const deleteProductDB = async (productId: string) => {
     const deletedproduct = await ProductModel.findByIdAndDelete({
       _id: productId,
     });
-    return deletedproduct; // If bike is not found, this will return null
+    return deletedproduct;
   } catch (error) {
     throw new Error('Error deleting bike');
   }

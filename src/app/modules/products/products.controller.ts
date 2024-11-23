@@ -24,13 +24,12 @@ const createProduct = async (req: Request, res: Response) => {
   } catch (error: any) {
     // If validation fails, Zod will throw an error
     if (error instanceof z.ZodError) {
-      // Map the Zod error to the exact structure you need
+      // Map the Zod error
       const validationErrors = error.errors.reduce((acc: any, err: any) => {
         acc[err.path[0]] = {
-          message: err.message, // Error message
-          name: 'ValidationError', // The name of the error
+          message: err.message,
+          name: 'ValidationError',
           properties: {
-            // Additional details about the error
             message: err.message,
             type: err.code === 'too_small' ? 'min' : err.code, // Zod's validation error type, e.g., 'min' or 'invalid_type'
             min: err.minimum || undefined,
@@ -94,7 +93,7 @@ const getAllProducts = async (req: Request, res: Response) => {
         success: false,
         error: {
           name: error.name,
-          errors: error.errors, // Include the full error object with details like message, properties, etc.
+          errors: error.errors,
         },
         stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
@@ -176,7 +175,7 @@ const updateProduct = async (req: Request, res: Response) => {
           name: 'ValidationError',
           message: error.message,
         },
-        stack: process.env.NODE_ENV === 'development' ? error.stack : null, // Show stack trace
+        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
     }
     // Handle "Resource not found" error
