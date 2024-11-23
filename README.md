@@ -38,31 +38,33 @@ The API includes the following routes (replace localhost:5000 with your deployed
 
 ## Setup
 
-~ Initialize the Node.js project: `npm init -y`
-~ Install Required Packages:
-\*\*\* Install Express.js for routing: `npm install express --save`
+- Initialize the Node.js project: `npm init -y`
 
-\*\*\* Install Mongoose for MongoDB: `npm install mongoose --save`
+### Install Required Packages:
 
-\*\*\* Install TypeScript: `npm install typescript --save-dev`
+- Install Express.js for routing: `npm install express --save`
 
-\*\*\* Install TypeScript Compiler: `npm install tsc --save-dev`
+- Install Mongoose for MongoDB: `npm install mongoose --save`
 
-\*\*\* Install TypeScript for Node.js: `npm install @types/node --save-dev`
+- Install TypeScript: `npm install typescript --save-dev`
 
-\*\*\* Install ESLint: `npm install eslint --save-dev`
+- Install TypeScript Compiler: `npm install tsc --save-dev`
 
-\*\*\* Install Prettier: `npm install prettier --save-dev`
+- Install TypeScript for Node.js: `npm install @types/node --save-dev`
 
-\*\*\* Install dotenv for environment variables: `npm install dotenv --save`
+- Install ESLint: `npm install eslint --save-dev`
 
-\*\*\* Install ts-node for running TypeScript: `npm install ts-node --save-dev`
+- Install Prettier: `npm install prettier --save-dev`
 
-\*\*\* Install nodemon for auto-reloading: `npm install nodemon --save-dev`
+- Install dotenv for environment variables: `npm install dotenv --save`
 
-\*\*\* Install TypeScript for Mongoose: `npm install @types/mongoose --save-dev`
+- Install ts-node for running TypeScript: `npm install ts-node --save-dev`
 
-\*\*\* Install CORS for cross-origin resource sharing: `npm i cors`
+- Install nodemon for auto-reloading: `npm install nodemon --save-dev`
+
+- Install TypeScript for Mongoose: `npm install @types/mongoose --save-dev`
+
+- Install CORS for cross-origin resource sharing: `npm i cors`
 
 ## Project Structure
 
