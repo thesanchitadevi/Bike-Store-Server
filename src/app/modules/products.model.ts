@@ -1,8 +1,12 @@
 import mongoose, { model, Schema } from 'mongoose';
-import { IProduct } from './products/products.interface';
+import {
+  IProduct,
+  ProductInstanceMethods,
+  ProductStaticMethods,
+} from './products/products.interface';
 
 // Product schema
-const productSchema = new Schema<IProduct>(
+const productSchema = new Schema<IProduct, ProductStaticMethods>(
   {
     name: { type: String, required: true },
     brand: { type: String, required: true },
@@ -15,18 +19,32 @@ const productSchema = new Schema<IProduct>(
     },
     description: { type: String, required: true },
     quantity: { type: Number, required: true },
-    inStock: { type: Boolean, required: true },
+    inStock: { type: Boolean, default: true },
   },
   {
+    versionKey: false, // Don't add a version key to the document
     timestamps: true, // Add timestamps for createdAt and updatedAt
   },
 );
 
-// Static method
+// Static method to check if a product exists
 productSchema.statics.isProductExist = async function (productId: string) {
-  const existProduct = await ProductModel.findOne({ productId });
+  const existProduct = await ProductModel.findOne({ _id: productId });
   return existProduct;
 };
 
+// Instance method to reduce stock
+productSchema.methods.reduceStock = async function (orderQuantity: number) {
+  if (this.quantity < orderQuantity) {
+    throw new Error('Insufficient stock');
+  }
+  this.quantity -= orderQuantity;
+  this.inStock = this.quantity > 0;
+  await this.save();
+};
+
 // Compile the schema into a model
-export const ProductModel = model<IProduct>('Product', productSchema);
+export const ProductModel = model<IProduct, ProductStaticMethods>(
+  'Product',
+  productSchema,
+);

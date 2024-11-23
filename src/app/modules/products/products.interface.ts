@@ -1,3 +1,5 @@
+import { Model } from 'mongoose';
+
 // Product interface
 export interface IProduct {
   name: string;
@@ -7,4 +9,15 @@ export interface IProduct {
   description: string;
   quantity: number;
   inStock: boolean;
+  reduceStock(quantity: number): Promise<void>;
+}
+
+// Static Methods
+export interface ProductStaticMethods extends Model<IProduct> {
+  isProductExist: (productId: string) => Promise<IProduct | null>;
+}
+
+// Instance Methods
+export interface ProductInstanceMethods {
+  reduceStock: (orderQuantity: number) => Promise<IProduct | null>;
 }
