@@ -145,18 +145,22 @@ const getProduct = async (req: Request, res: Response) => {
       data: product,
     });
   } catch (error: any) {
-    // If the error is "Resource not found"
+    // Handle "Resource not found" error
     if (error.message === 'Resource not found') {
+      const resourceNotFoundError = {
+        resource: error.resource || 'Unknown Resource',
+        message: error.message || 'Resource not found',
+        name: error.name,
+      };
       res.status(404).json({
         message: 'Resource not found',
         success: false,
         error: {
-          name: 'NotFoundError',
-          message: 'The requested resource could not be found',
+          name: resourceNotFoundError.name,
+          details: resourceNotFoundError,
         },
         stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
-      return;
     }
     // General error handling f
     res.status(500).json({
@@ -221,12 +225,17 @@ const updateProduct = async (req: Request, res: Response) => {
     }
     // Handle "Resource not found" error
     if (error.message === 'Resource not found') {
+      const resourceNotFoundError = {
+        resource: error.resource || 'Unknown Resource',
+        message: error.message || 'Resource not found',
+        name: error.name,
+      };
       res.status(404).json({
         message: 'Resource not found',
         success: false,
         error: {
-          name: 'NotFoundError',
-          message: 'The requested resource could not be found',
+          name: resourceNotFoundError.name,
+          details: resourceNotFoundError,
         },
         stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
@@ -259,18 +268,22 @@ const deleteProduct = async (req: Request, res: Response) => {
       data: {},
     });
   } catch (error: any) {
-    // If the error is "Resource not found"
+    // Handle "Resource not found" error
     if (error.message === 'Resource not found') {
+      const resourceNotFoundError = {
+        resource: error.resource || 'Unknown Resource',
+        message: error.message || 'Resource not found',
+        name: error.name,
+      };
       res.status(404).json({
         message: 'Resource not found',
         success: false,
         error: {
-          name: 'NotFoundError',
-          message: 'The requested resource could not be found',
+          name: resourceNotFoundError.name,
+          details: resourceNotFoundError,
         },
         stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
-      return;
     }
     // General error handling
     res.status(500).json({
