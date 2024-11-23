@@ -1,16 +1,16 @@
-import mongoose, { model, Schema } from 'mongoose';
-import {
-  IProduct,
-  ProductInstanceMethods,
-  ProductStaticMethods,
-} from './products/products.interface';
+import { model, Schema } from 'mongoose';
+import { IProduct, ProductStaticMethods } from './products/products.interface';
 
 // Product schema
 const productSchema = new Schema<IProduct, ProductStaticMethods>(
   {
     name: { type: String, required: true },
     brand: { type: String, required: true },
-    price: { type: Number, required: true },
+    price: {
+      type: Number,
+      required: true,
+      min: [0, 'Price must be a positive value'],
+    },
     category: {
       type: String,
       enum: ['Mountain', 'Road', 'Hybrid', 'Electric'],
@@ -18,7 +18,11 @@ const productSchema = new Schema<IProduct, ProductStaticMethods>(
       required: true,
     },
     description: { type: String, required: true },
-    quantity: { type: Number, required: true },
+    quantity: {
+      type: Number,
+      required: true,
+      min: [0, 'Quantity must be greater than or equal to zero'],
+    },
     inStock: { type: Boolean, default: true },
   },
   {
