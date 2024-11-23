@@ -1,6 +1,7 @@
 // Code for the app
-import express, { Application, Request, Response } from "express";
-import cors from "cors";
+import express, { Application, Request, Response } from 'express';
+import cors from 'cors';
+import { ProductRouter } from './app/modules/products/products.routes';
 
 const app: Application = express();
 
@@ -9,15 +10,17 @@ app.use(express.json());
 app.use(cors());
 
 // application routes
-app.use("/api/");
+// Product routes
+app.use('/api/products', ProductRouter);
 
+// Default route
 const getController = (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
-    message: "Welcome to the Bike Store API",
+    message: 'Welcome to the Bike Store API',
   });
 };
 
-app.get("/", getController);
+app.get('/', getController);
 
 export default app;
