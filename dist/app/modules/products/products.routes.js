@@ -7,9 +7,11 @@ exports.ProductRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const products_controller_1 = require("./products.controller");
 const router = express_1.default.Router();
-router.post('/create-product', products_controller_1.productController.createProduct);
-// router.get('/', productController.getAllProducts);
-// router.get('/:id', productController.getProduct);
-// router.delete('/:id', productController.deleteProduct);
-// won't return object as router itself is an object
+// Routes
+router.post('/', products_controller_1.productController.createProduct);
+router.get('/', products_controller_1.productController.getAllProducts);
+router.get('/:productId', products_controller_1.productController.getProduct);
+router.put('/:productId', products_controller_1.productController.updateProduct);
+router.delete('/:productId', products_controller_1.productController.deleteProduct);
+// Export the router
 exports.ProductRouter = router;
