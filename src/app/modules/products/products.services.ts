@@ -55,7 +55,11 @@ const updateProductDB = async (
     const updatedProduct = await ProductModel.findByIdAndUpdate(
       { _id: productId }, // Find product by ID
       updateData, // Update the product with the provided data
-      { new: true, ...options }, // Option to return the updated document
+      {
+        new: true,
+        runValidators: true, // Ensure validation is triggered
+        ...options,
+      }, // Option to return the updated document
     );
     return updatedProduct;
   } catch (error) {
