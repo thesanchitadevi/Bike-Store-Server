@@ -118,13 +118,14 @@ const getAllProducts = async (req: Request, res: Response) => {
         },
         stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
+    } else {
+      // General error handling
+      res.status(500).json({
+        status: false,
+        message: 'Error retrieving bikes',
+        error: error.message || 'An unknown error occurred',
+      });
     }
-    // General error handling
-    res.status(500).json({
-      status: false,
-      message: 'Error retrieving bikes',
-      error: error.message || 'An unknown error occurred',
-    });
   }
 };
 
@@ -161,13 +162,14 @@ const getProduct = async (req: Request, res: Response) => {
         },
         stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
+    } else {
+      // General error handling
+      res.status(500).json({
+        status: false,
+        message: 'Error retrieving the bike',
+        error: error.message || 'An unknown error occurred',
+      });
     }
-    // General error handling
-    res.status(500).json({
-      status: false,
-      message: 'Error retrieving the bike',
-      error: error.message || 'An unknown error occurred',
-    });
   }
 };
 
@@ -286,13 +288,14 @@ const deleteProduct = async (req: Request, res: Response) => {
         },
         stack: process.env.NODE_ENV === 'development' ? error.stack : null,
       });
+    } else {
+      // General error handling
+      res.status(500).json({
+        success: false,
+        message: 'Error deleting the bike',
+        error: error.message || 'An unknown error occurred',
+      });
     }
-    // General error handling
-    res.status(500).json({
-      success: false,
-      message: 'Error deleting the bike',
-      error: error.message || 'An unknown error occurred',
-    });
   }
 };
 

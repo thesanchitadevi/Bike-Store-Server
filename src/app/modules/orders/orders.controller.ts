@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { getOrdersServices } from './orders.services';
-import mongoose from 'mongoose';
 
 /* Controller functions for the product module  */
 
