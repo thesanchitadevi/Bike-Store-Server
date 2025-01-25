@@ -1,5 +1,5 @@
-import { ProductModel } from '../products.model';
 import { IProduct } from './products.interface';
+import { ProductModel } from './products.model';
 
 /* Database operations for products */
 

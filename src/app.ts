@@ -1,8 +1,9 @@
 // Code for the app
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
-import { ProductRouter } from './app/modules/products/products.routes';
-import { OrderRouter } from './app/modules/orders/orders.routes';
+import router from './app/routes';
+import globalErrorHandler from './app/middlewares/globalErrorHandler';
+import notFound from './app/middlewares/notFound';
 
 const app: Application = express();
 
@@ -11,13 +12,10 @@ app.use(express.json());
 app.use(cors());
 
 // application routes
-// Product routes
-app.use('/api/products', ProductRouter);
-// Order routes
-app.use('/api/orders', OrderRouter);
+app.use('/api', router);
 
 // Default route
-const getController = (req: Request, res: Response) => {
+const getController = async (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
     message: 'Welcome to the Bike Store API',
@@ -25,5 +23,11 @@ const getController = (req: Request, res: Response) => {
 };
 
 app.get('/', getController);
+
+// Error handling
+app.use(globalErrorHandler);
+
+// Not found
+app.use(notFound);
 
 export default app;

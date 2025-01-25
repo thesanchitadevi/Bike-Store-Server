@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { IProduct, ProductStaticMethods } from './products/products.interface';
+import { IProduct, ProductStaticMethods } from './products.interface';
 
 // Product schema
 const productSchema = new Schema<IProduct, ProductStaticMethods>(
