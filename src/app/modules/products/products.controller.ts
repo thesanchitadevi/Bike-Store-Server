@@ -46,86 +46,21 @@ const getProduct = catchAsync(async (req, res) => {
 });
 
 // Function to update product details
-const updateProduct = async (req: Request, res: Response) => {
-  try {
-    const productId = req.params.productId;
+const updateProduct = catchAsync(async (req, res) => {
+  // Update Academic Department by id
+  const { productId } = req.params;
+  const updatedProduct = await ProductServices.updateProductDB(
+    productId,
+    req.body,
+  );
 
-    const updatedProduct = await getProductServices.updateProductDB(
-      productId,
-      req.body,
-    );
-
-    // Handle case where the product is not found
-    if (!updatedProduct) {
-      throw new Error('Resource not found');
-    }
-
-    res.status(200).json({
-      status: true,
-      message: 'Bike updated successfully',
-      data: updatedProduct,
-    });
-  } catch (error: any) {
-    // Check if the error is a Mongoose validation error
-    if (error.name === 'ValidationError') {
-      // Map Mongoose validation error to the required structure
-      const validationErrors = Object.keys(error.errors).reduce(
-        (acc: any, key: string) => {
-          const err = error.errors[key];
-          acc[key] = {
-            message: err.message,
-            name: err.name,
-            properties: {
-              message: err.message,
-              type: err.properties.type, // Validation type (e.g., 'required', 'min')
-              min: err.properties.min, // Minimum value
-            },
-            kind: err.kind, // Validation kind (e.g., 'required', 'min')
-            path: err.path, // Path of the field (e.g., 'price')
-            value: req.body[key], // The invalid value
-          };
-          return acc;
-        },
-        {},
-      );
-      // Respond with validation errors
-      res.status(400).json({
-        message: 'Validation failed',
-        success: false,
-        error: {
-          name: error.name,
-          errors: validationErrors,
-        },
-        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
-      });
-    }
-    // Handle "Resource not found" error
-    else if (error.message === 'Resource not found') {
-      const resourceNotFoundError = {
-        resource: error.resource || 'Unknown Resource',
-        message: error.message || 'Resource not found',
-        name: error.name,
-      };
-      res.status(404).json({
-        message: 'Resource not found',
-        success: false,
-        error: {
-          name: resourceNotFoundError.name,
-          details: resourceNotFoundError,
-        },
-        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
-      });
-    } else {
-      // General error handling
-      res.status(500).json({
-        status: false,
-        message: 'An error occurred while updating the bike',
-        error: error.message || 'An unknown error occurred',
-        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
-      });
-    }
-  }
-};
+  sendResponse(res, {
+    statusCode: HttpStatus.OK,
+    success: true,
+    message: 'Bike updated successfully',
+    data: updatedProduct,
+  });
+});
 
 // Function to delete a product from the database
 const deleteProduct = async (req: Request, res: Response) => {

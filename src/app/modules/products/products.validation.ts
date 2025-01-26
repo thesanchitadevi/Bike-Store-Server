@@ -51,4 +51,59 @@ const createProductValidationSchema = z.object({
   }),
 });
 
-export const ProductValidationSchema = { createProductValidationSchema };
+const updateProductValidationSchema = z.object({
+  body: z.object({
+    name: z
+      .string({
+        invalid_type_error: 'Product name must be a string',
+      })
+      .min(1, 'Product name cannot be empty')
+      .optional(),
+
+    brand: z
+      .string({
+        invalid_type_error: 'Brand must be a string',
+      })
+      .min(1, 'Brand cannot be empty')
+      .optional(),
+
+    price: z
+      .number({
+        invalid_type_error: 'Price must be a number',
+      })
+      .min(0, 'Price must be a positive value')
+      .optional(),
+
+    category: z
+      .enum(['Mountain', 'Road', 'Hybrid', 'Electric'], {
+        invalid_type_error:
+          'Invalid category. Must be one of: Mountain, Road, Hybrid, Electric',
+      })
+      .optional(),
+
+    description: z
+      .string({
+        invalid_type_error: 'Description must be a string',
+      })
+      .min(1, 'Description cannot be empty')
+      .optional(),
+
+    quantity: z
+      .number({
+        invalid_type_error: 'Quantity must be a number',
+      })
+      .min(0, 'Quantity must be greater than or equal to zero')
+      .optional(),
+
+    inStock: z
+      .boolean({
+        invalid_type_error: 'inStock must be a boolean',
+      })
+      .optional(),
+  }),
+});
+
+export const ProductValidationSchema = {
+  createProductValidationSchema,
+  updateProductValidationSchema,
+};

@@ -37,23 +37,19 @@ const getProductDB = async (productId: string) => {
 // Update a product in the database
 const updateProductDB = async (
   productId: string,
-  updateData: any,
-  options: any = {},
+  updateData: Partial<IProduct>,
 ) => {
-  try {
-    const updatedProduct = await ProductModel.findByIdAndUpdate(
-      { _id: productId }, // Find product by ID
-      updateData, // Update the product with the provided data
-      {
-        new: true,
-        runValidators: true, // Ensure validation is triggered
-        ...options,
-      }, // Option to return the updated document
-    );
-    return updatedProduct;
-  } catch (error) {
-    throw error;
+  const updatedProduct = await ProductModel.findByIdAndUpdate(
+    { _id: productId }, // Find product by ID
+    updateData, // Update the product with the provided data
+    { new: true, runValidators: true }, // Return the updated document and run validators
+  );
+
+  if (!updatedProduct) {
+    throw new Error('Product not found');
   }
+
+  return updatedProduct;
 };
 
 // Delete a product from the database

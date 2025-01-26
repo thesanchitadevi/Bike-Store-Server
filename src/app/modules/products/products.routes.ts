@@ -15,7 +15,12 @@ router.post(
 );
 router.get('/', productController.getAllProducts);
 router.get('/:productId', productController.getProduct);
-router.put('/:productId', productController.updateProduct);
+router.put(
+  '/:productId',
+  auth('admin'),
+  validateRequest(ProductValidationSchema.updateProductValidationSchema),
+  productController.updateProduct,
+);
 router.delete('/:productId', productController.deleteProduct);
 
 // Export the router

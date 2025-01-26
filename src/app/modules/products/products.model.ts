@@ -9,19 +9,15 @@ const productSchema = new Schema<IProduct, ProductStaticMethods>(
     price: {
       type: Number,
       required: true,
-      min: [0, 'Price must be a positive value'],
     },
     category: {
       type: String,
       enum: ['Mountain', 'Road', 'Hybrid', 'Electric'],
-      message: 'Invalid category',
-      required: true,
     },
     description: { type: String, required: true },
     quantity: {
       type: Number,
       required: true,
-      min: [0, 'Quantity must be greater than or equal to zero'],
     },
     inStock: { type: Boolean, default: true },
   },
