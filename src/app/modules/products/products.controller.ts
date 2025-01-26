@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 import { ProductServices } from './products.services';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
@@ -47,7 +46,7 @@ const getProduct = catchAsync(async (req, res) => {
 
 // Function to update product details
 const updateProduct = catchAsync(async (req, res) => {
-  // Update Academic Department by id
+  // Update product details by id
   const { productId } = req.params;
   const updatedProduct = await ProductServices.updateProductDB(
     productId,
@@ -63,48 +62,17 @@ const updateProduct = catchAsync(async (req, res) => {
 });
 
 // Function to delete a product from the database
-const deleteProduct = async (req: Request, res: Response) => {
-  const productId = req.params.productId;
-  try {
-    const deletedProduct = await getProductServices.deleteProductDB(productId);
+const deleteProduct = catchAsync(async (req, res) => {
+  // Delete product by id
+  const { productId } = req.params;
+  await ProductServices.deleteProductDB(productId);
 
-    // Handle case where the product is not found
-    if (!deletedProduct) {
-      throw new Error('Resource not found');
-    }
-
-    res.status(200).json({
-      message: 'Bike deleted successfully',
-      status: true,
-      data: {},
-    });
-  } catch (error: any) {
-    // Handle "Resource not found" error
-    if (error.message === 'Resource not found') {
-      const resourceNotFoundError = {
-        resource: error.resource || 'Unknown Resource',
-        message: error.message || 'Resource not found',
-        name: error.name,
-      };
-      res.status(404).json({
-        message: 'Resource not found',
-        success: false,
-        error: {
-          name: resourceNotFoundError.name,
-          details: resourceNotFoundError,
-        },
-        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
-      });
-    } else {
-      // General error handling
-      res.status(500).json({
-        success: false,
-        message: 'Error deleting the bike',
-        error: error.message || 'An unknown error occurred',
-      });
-    }
-  }
-};
+  sendResponse(res, {
+    statusCode: HttpStatus.OK,
+    success: true,
+    message: 'Bike deleted successfully',
+  });
+});
 
 // Export the controller functions
 export const productController = {

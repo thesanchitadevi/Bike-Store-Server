@@ -1,3 +1,5 @@
+import { HttpStatus } from 'http-status-ts';
+import { AppError } from '../../AppError';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { ProductSearchableFields } from './products.constant';
 import { IProduct } from './products.interface';
@@ -31,6 +33,11 @@ const getAllProductsDB = async (query: Record<string, unknown>) => {
 // Get a single product from the database
 const getProductDB = async (productId: string) => {
   const product = await ProductModel.findById(productId);
+
+  if (!product) {
+    throw new AppError(HttpStatus.NOT_FOUND, 'Product not found');
+  }
+
   return product;
 };
 
@@ -46,7 +53,7 @@ const updateProductDB = async (
   );
 
   if (!updatedProduct) {
-    throw new Error('Product not found');
+    throw new AppError(HttpStatus.NOT_FOUND, 'Product not found');
   }
 
   return updatedProduct;
@@ -54,14 +61,13 @@ const updateProductDB = async (
 
 // Delete a product from the database
 const deleteProductDB = async (productId: string) => {
-  try {
-    const deletedproduct = await ProductModel.findByIdAndDelete({
-      _id: productId,
-    });
-    return deletedproduct;
-  } catch (error) {
-    throw error;
+  const deletedProduct = await ProductModel.findByIdAndDelete(productId);
+
+  if (!deletedProduct) {
+    throw new AppError(HttpStatus.NOT_FOUND, 'Product not found');
   }
+
+  return deletedProduct;
 };
 
 // Export the functions to be used in the controller
