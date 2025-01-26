@@ -30,12 +30,8 @@ const getAllProductsDB = async (query: Record<string, unknown>) => {
 
 // Get a single product from the database
 const getProductDB = async (productId: string) => {
-  try {
-    const product = await ProductModel.findOne({ _id: productId });
-    return product;
-  } catch (error) {
-    throw error;
-  }
+  const product = await ProductModel.findById(productId);
+  return product;
 };
 
 // Update a product in the database

@@ -40,7 +40,7 @@ productSchema.statics.isProductExist = async function (productId: string) {
 // Instance method to reduce stock
 productSchema.methods.reduceStock = async function (orderQuantity: number) {
   if (this.quantity < orderQuantity) {
-    throw new Error('Insufficient stock');
+    throw new Error('Product out of stock');
   }
   this.quantity -= orderQuantity;
   this.inStock = this.quantity > 0;

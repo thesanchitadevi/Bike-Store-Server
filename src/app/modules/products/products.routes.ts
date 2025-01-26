@@ -2,12 +2,14 @@ import express from 'express';
 import { productController } from './products.controller';
 import validateRequest from '../../middlewares/validateRequest';
 import { ProductValidationSchema } from './products.validation';
+import auth from '../../middlewares/auth';
 
 const router = express.Router();
 
 // Routes
 router.post(
   '/',
+  auth('admin'),
   validateRequest(ProductValidationSchema.createProductValidationSchema),
   productController.createProduct,
 );

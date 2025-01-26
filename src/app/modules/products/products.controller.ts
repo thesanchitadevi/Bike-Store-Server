@@ -32,48 +32,18 @@ const getAllProducts = catchAsync(async (req, res) => {
 });
 
 // Function to get a product by ID
-const getProduct = async (req: Request, res: Response) => {
-  try {
-    const productId = req.params.productId;
+const getProduct = catchAsync(async (req, res) => {
+  // Get Academic Faculty by id
+  const { productId } = req.params;
+  const product = await ProductServices.getProductDB(productId);
 
-    const product = await getProductServices.getProductDB(productId);
-    // Handle case where the product is not found
-    if (!product) {
-      throw new Error('Resource not found');
-    }
-
-    res.status(200).json({
-      status: true,
-      message: 'Bike retrieved successfully',
-      data: product,
-    });
-  } catch (error: any) {
-    // Handle "Resource not found" error
-    if (error.message === 'Resource not found') {
-      const resourceNotFoundError = {
-        resource: error.resource || 'Unknown Resource',
-        message: error.message || 'Resource not found',
-        name: error.name,
-      };
-      res.status(404).json({
-        message: 'Resource not found',
-        success: false,
-        error: {
-          name: resourceNotFoundError.name,
-          details: resourceNotFoundError,
-        },
-        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
-      });
-    } else {
-      // General error handling
-      res.status(500).json({
-        status: false,
-        message: 'Error retrieving the bike',
-        error: error.message || 'An unknown error occurred',
-      });
-    }
-  }
-};
+  sendResponse(res, {
+    statusCode: HttpStatus.OK,
+    success: true,
+    message: 'Bike retrieved successfully',
+    data: product,
+  });
+});
 
 // Function to update product details
 const updateProduct = async (req: Request, res: Response) => {
