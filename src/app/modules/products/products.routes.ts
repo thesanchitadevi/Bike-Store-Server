@@ -1,10 +1,16 @@
 import express from 'express';
 import { productController } from './products.controller';
+import validateRequest from '../../middlewares/validateRequest';
+import { ProductValidationSchema } from './products.validation';
 
 const router = express.Router();
 
 // Routes
-router.post('/', productController.createProduct);
+router.post(
+  '/',
+  validateRequest(ProductValidationSchema.createProductValidationSchema),
+  productController.createProduct,
+);
 router.get('/', productController.getAllProducts);
 router.get('/:productId', productController.getProduct);
 router.put('/:productId', productController.updateProduct);

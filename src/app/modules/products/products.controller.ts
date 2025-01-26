@@ -1,64 +1,22 @@
 import { Request, Response } from 'express';
-import { getProductServices } from './products.services';
+import { ProductServices } from './products.services';
+import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
+import { HttpStatus } from 'http-status-ts';
 
 /* Controller functions for the product module  */
 
 // Function to create a new product
-const createProduct = async (req: Request, res: Response) => {
-  try {
-    const product = req.body;
-    const newProduct = await getProductServices.createProductDB(product);
+const createProduct = catchAsync(async (req, res) => {
+  const result = await ProductServices.createProductDB(req.body);
 
-    res.status(201).json({
-      message: 'Bike created successfully',
-      status: true,
-      data: newProduct,
-    });
-  } catch (error: any) {
-    // Check if the error is a Mongoose validation error
-    if (error.name === 'ValidationError') {
-      // Map Mongoose validation error to the required structure
-      const validationErrors = Object.keys(error.errors).reduce(
-        (acc: any, key: string) => {
-          const err = error.errors[key];
-          acc[key] = {
-            message: err.message,
-            name: err.name,
-            properties: {
-              message: err.message,
-              type: err.properties.type, // Validation type (e.g., 'required', 'min')
-              min: err.properties.min, // Minimum value
-            },
-            kind: err.kind, // Validation kind (e.g., 'required', 'min')
-            path: err.path, // Path of the field (e.g., 'price')
-            value: req.body[key], // The invalid value
-          };
-          return acc;
-        },
-        {},
-      );
-
-      // Respond with validation errors
-      res.status(400).json({
-        message: 'Validation failed',
-        success: false,
-        error: {
-          name: error.name,
-          errors: validationErrors,
-        },
-        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
-      });
-    } else {
-      // General error handling
-      res.status(500).json({
-        message: 'Error in creating product',
-        success: false,
-        error: error.message || 'An unknown error occurred',
-        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
-      });
-    }
-  }
-};
+  sendResponse(res, {
+    statusCode: HttpStatus.CREATED,
+    success: true,
+    message: 'Bike created successfully',
+    data: result,
+  });
+});
 
 // Function to get all products
 const getAllProducts = async (req: Request, res: Response) => {

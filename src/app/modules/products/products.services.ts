@@ -1,3 +1,4 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import { IProduct } from './products.interface';
 import { ProductModel } from './products.model';
 
@@ -5,34 +6,24 @@ import { ProductModel } from './products.model';
 
 // Create a new product in the database
 const createProductDB = async (productData: IProduct) => {
-  try {
-    const newProduct = await ProductModel.create(productData);
-    return newProduct;
-  } catch (error) {
-    throw error;
-  }
+  const newProduct = await ProductModel.create(productData);
+  return newProduct;
 };
 
 // Get all products from the database
-const getAllProductsDB = async (searchTerm?: string) => {
-  try {
-    let filter = {}; // Default filter for no search term
+const getAllProductsDB = async (query: Record<string, unknown>) => {
+  const productsQuery = new QueryBuilder(ProductModel.find(), query)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
 
-    if (searchTerm) {
-      filter = {
-        $or: [
-          { name: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search for name
-          { brand: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search for brand
-          { category: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search for category
-        ],
-      };
-    }
-
-    const allProducts = await ProductModel.find(filter);
-    return allProducts;
-  } catch (error) {
-    throw new Error('Error retrieving bikes from the database');
-  }
+  const meta = await productsQuery.countTotal();
+  const result = await productsQuery.modelQuery;
+  return {
+    meta,
+    result,
+  };
 };
 
 // Get a single product from the database
@@ -80,7 +71,7 @@ const deleteProductDB = async (productId: string) => {
 };
 
 // Export the functions to be used in the controller
-export const getProductServices = {
+export const ProductServices = {
   createProductDB,
   getAllProductsDB,
   getProductDB,
