@@ -1,44 +1,70 @@
 import { model, Schema } from 'mongoose';
 import { IOrder } from './orders.interface';
 
+// Delivery address schema
+const deliveryAddressSchema = new Schema({
+  fullName: { type: String, required: [true, 'Full name is required'] },
+  phone: { type: String, required: [true, 'Phone number is required'] },
+  addressLine1: {
+    type: String,
+    required: [true, 'Address line 1 is required'],
+  },
+  addressLine2: { type: String },
+  city: { type: String, required: [true, 'City is required'] },
+  state: { type: String, required: [true, 'State is required'] },
+  postalCode: { type: String, required: [true, 'Postal code is required'] },
+  country: { type: String, required: [true, 'Country is required'] },
+});
+
 // Order schema
 const OrderSchema = new Schema<IOrder>(
   {
-    email: {
-      type: String,
-      required: [true, 'Email is required'],
-      match: [
-        /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-        'Please enter a valid email address',
-      ],
-    },
-    product: {
+    user: {
       type: Schema.Types.ObjectId,
-      ref: 'Product',
-      required: [true, 'Product is required'],
+      ref: 'User',
     },
-    quantity: {
-      type: Number,
-      required: [true, 'Quantity is required'],
-      min: [1, 'Quantity must be at least 1'],
-      validate: {
-        validator: (value: number) => value > 0,
-        message: 'Quantity must be greater than zero',
+    products: [
+      {
+        product: {
+          type: Schema.Types.ObjectId,
+          ref: 'Product',
+          required: [true, 'Product ID is required'],
+        },
+        quantity: {
+          type: Number,
+          required: [true, 'Quantity is required'],
+          min: [1, 'Quantity must be at least 1'],
+        },
       },
-    },
+    ],
     totalPrice: {
       type: Number,
       required: [true, 'Total price is required'],
-      min: [0, 'Total price must be greater than or equal to 0'],
-      validate: {
-        validator: (value: number) => value >= 0,
-        message: 'Total price must be greater than or equal to 0',
-      },
+      min: [0, 'Total price must be a positive value'],
+    },
+    paymentMethod: {
+      type: String,
+      enum: ['COD', 'SurjoPay'], // Allowed payment methods
+      required: [true, 'Payment method is required'],
+    },
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'completed', 'failed'],
+      default: 'pending',
+    },
+    orderStatus: {
+      type: String,
+      enum: ['pending', 'completed', 'cancelled'],
+      default: 'pending',
+    },
+    deliveryAddress: {
+      type: deliveryAddressSchema,
+      required: [true, 'Delivery address is required'],
     },
   },
   {
-    versionKey: false, // Don't add a version key to the document
-    timestamps: true, // Add timestamps for createdAt and updatedAt
+    timestamps: true, // Add createdAt and updatedAt fields
+    versionKey: false, // Disable the version key (__v)
   },
 );
 

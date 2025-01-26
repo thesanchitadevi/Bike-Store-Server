@@ -21,10 +21,10 @@ const auth = (...requiredRoles: TUserRole[]) => {
       throw new AppError(HttpStatus.UNAUTHORIZED, 'You are not authorized!');
     }
 
-    const { role, userId, iat } = decoded as JwtPayload;
+    const { email, role, iat } = decoded as JwtPayload;
 
     // check if the user is exists
-    const user = await UserModel.isUserExistsByCustomId(userId);
+    const user = await UserModel.isUserExistsByEmail(email);
     if (!user) {
       throw new AppError(HttpStatus.NOT_FOUND, 'User not found !');
     }

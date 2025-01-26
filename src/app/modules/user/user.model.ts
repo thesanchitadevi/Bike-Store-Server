@@ -5,10 +5,6 @@ import bcrypt from 'bcrypt';
 
 const userSchema = new Schema<IUser, IUserStaticModel>(
   {
-    id: {
-      type: String,
-      unique: true,
-    },
     name: {
       type: String,
     },
@@ -31,8 +27,8 @@ const userSchema = new Schema<IUser, IUserStaticModel>(
     },
     role: {
       type: String,
-      enum: ['admin', 'customer'],
-      default: 'customer',
+      enum: ['admin', 'user'],
+      default: 'user',
     },
     status: {
       type: String,
