@@ -1,4 +1,5 @@
 import QueryBuilder from '../../builder/QueryBuilder';
+import { ProductSearchableFields } from './products.constant';
 import { IProduct } from './products.interface';
 import { ProductModel } from './products.model';
 
@@ -13,6 +14,7 @@ const createProductDB = async (productData: IProduct) => {
 // Get all products from the database
 const getAllProductsDB = async (query: Record<string, unknown>) => {
   const productsQuery = new QueryBuilder(ProductModel.find(), query)
+    .search(ProductSearchableFields)
     .filter()
     .sort()
     .paginate()

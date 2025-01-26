@@ -10,14 +10,14 @@ class QueryBuilder<T> {
   }
 
   search(searchableFields: string[]) {
-    const searchTerm = this?.query?.searchTerm;
+    const search = this?.query?.searchTerm || this?.query?.search;
 
-    if (searchTerm) {
+    if (search) {
       this.modelQuery = this.modelQuery.find({
         $or: searchableFields.map(
           (field) =>
             ({
-              [field]: { $regex: searchTerm, $options: 'i' },
+              [field]: { $regex: search, $options: 'i' },
             }) as FilterQuery<T>,
         ),
       });
@@ -29,8 +29,42 @@ class QueryBuilder<T> {
     const queryObject = { ...this.query };
 
     // Filtering
-    const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
+    const excludeFields = [
+      'search',
+      'sort',
+      'filter',
+      'limit',
+      'page',
+      'fields',
+    ];
     excludeFields.forEach((element) => delete queryObject[element]);
+
+    // Handle model, brand, and category filtering
+    if (queryObject.model) {
+      queryObject.model = { $regex: queryObject.model, $options: 'i' }; // Case-insensitive search for model
+    }
+    if (queryObject.brand) {
+      queryObject.brand = { $regex: queryObject.brand, $options: 'i' }; // Case-insensitive search for brand
+    }
+    if (queryObject.category) {
+      queryObject.category = { $regex: queryObject.category, $options: 'i' }; // Case-insensitive search for category
+    }
+
+    // Handle price range filtering
+    if (queryObject.minPrice || queryObject.maxPrice) {
+      queryObject.price = {
+        $gte: Number(queryObject.minPrice) || 0, // Minimum price
+        $lte: Number(queryObject.maxPrice) || Infinity, // Maximum price
+      };
+      delete queryObject.minPrice;
+      delete queryObject.maxPrice;
+    }
+
+    // Handle availability filtering
+    if (queryObject.availability) {
+      queryObject.inStock = queryObject.availability === 'true'; // Convert string to boolean
+      delete queryObject.availability;
+    }
 
     this.modelQuery = this.modelQuery.find(queryObject as FilterQuery<T>);
 
