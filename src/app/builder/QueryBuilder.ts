@@ -66,6 +66,27 @@ class QueryBuilder<T> {
       delete queryObject.availability;
     }
 
+    // Handle status filtering (for orders)
+    if (queryObject.orderStatus) {
+      queryObject.status = queryObject.orderStatus;
+    }
+
+    // Handle payment method filtering (for orders)
+    if (queryObject.paymentMethod) {
+      queryObject.paymentMethod = {
+        $regex: queryObject.paymentMethod,
+        $options: 'i',
+      };
+    }
+
+    // Handle payment status filtering (for orders)
+    if (queryObject.paymentStatus) {
+      queryObject.paymentStatus = {
+        $regex: queryObject.paymentStatus,
+        $options: 'i',
+      };
+    }
+
     this.modelQuery = this.modelQuery.find(queryObject as FilterQuery<T>);
 
     return this;

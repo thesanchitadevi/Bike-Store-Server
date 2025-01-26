@@ -1,7 +1,6 @@
 export const OrderSearchableFields = [
-  'name',
-  'email',
-  'category',
-  'status',
-  'brand',
+  'paymentStatus',
+  'orderStatus',
+  'paymentMethod',
+  'deliveryAddress.fullName',
 ];
