@@ -38,8 +38,22 @@ const getAllOrders = catchAsync(async (req, res) => {
   });
 });
 
+// Function to get an order by ID
+const getOrder = catchAsync(async (req, res) => {
+  const { orderId } = req.params;
+  const result = await OrdersServices.getOrderDB(orderId);
+
+  sendResponse(res, {
+    statusCode: HttpStatus.OK,
+    success: true,
+    message: 'Order retrieved successfully',
+    data: result,
+  });
+});
+
 // Export the controller functions
 export const orderController = {
   createOrder,
   getAllOrders,
+  getOrder,
 };

@@ -73,8 +73,22 @@ const getAllOrdersDB = async (query: Record<string, unknown>) => {
   };
 };
 
+// Get order by ID from the database
+const getOrderDB = async (orderId: string) => {
+  const order = await OrderModel.findById(orderId)
+    .populate('user', 'name email')
+    .populate('products.product', 'name price');
+
+  if (!order) {
+    throw new AppError(HttpStatus.NOT_FOUND, 'Order not found');
+  }
+
+  return order;
+};
+
 // Export the functions to be used in the controller
 export const OrdersServices = {
   createOrderDB,
   getAllOrdersDB,
+  getOrderDB,
 };

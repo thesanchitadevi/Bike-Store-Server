@@ -13,5 +13,7 @@ router.post(
 );
 router.get('/', orderController.getAllOrders);
 
+router.get('/:orderId', orderController.getOrder);
+
 // Export the router
 export const OrderRouter = router;
