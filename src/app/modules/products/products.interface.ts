@@ -9,7 +9,7 @@ export interface IProduct {
   description: string;
   quantity: number;
   inStock: boolean;
-  image?: string;
+  image: string;
   reduceStock(quantity: number): Promise<void>;
 }
 
