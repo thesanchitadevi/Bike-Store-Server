@@ -103,6 +103,20 @@ const updateOrder = catchAsync(async (req, res) => {
   });
 });
 
+// Function to delete an order
+const deleteOrder = catchAsync(async (req, res) => {
+  const { orderId } = req.params;
+  const user = req.user;
+
+  await OrdersServices.deleteOrderDB(orderId, user._id);
+
+  sendResponse(res, {
+    statusCode: HttpStatus.OK,
+    success: true,
+    message: 'Order deleted successfully',
+  });
+});
+
 // Export the controller functions
 export const orderController = {
   createOrder,
@@ -111,4 +125,5 @@ export const orderController = {
   getOrder,
   getOrdersByUser,
   updateOrder,
+  deleteOrder,
 };

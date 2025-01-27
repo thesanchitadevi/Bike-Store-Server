@@ -260,6 +260,35 @@ const updateOrderDB = async (
   return updatedOrder;
 };
 
+// Delete order
+const deleteOrderDB = async (orderId: string, userId: string) => {
+  const order = await OrderModel.findOneAndDelete({
+    _id: orderId,
+    user: userId,
+  });
+
+  if (!order) {
+    throw new AppError(HttpStatus.NOT_FOUND, 'Order not found');
+  }
+
+  // Restore stock for all products in the order
+  for (const item of order.products) {
+    const product = await ProductModel.findById(item.product);
+
+    if (product) {
+      product.quantity += item.quantity; // Restore the stock
+      await product.save();
+    } else {
+      throw new AppError(
+        HttpStatus.NOT_FOUND,
+        `Product with ID ${item.product} not found`,
+      );
+    }
+  }
+
+  return order;
+};
+
 // Export the functions to be used in the controller
 export const OrdersServices = {
   createOrderDB,
@@ -268,4 +297,5 @@ export const OrdersServices = {
   getOrderDB,
   getOrdersByUserDB,
   updateOrderDB,
+  deleteOrderDB,
 };

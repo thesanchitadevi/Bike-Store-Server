@@ -30,5 +30,11 @@ router.patch(
   orderController.updateOrder,
 );
 
+router.delete(
+  '/:orderId',
+  auth(USER_ROLE.user, USER_ROLE.admin),
+  orderController.deleteOrder,
+);
+
 // Export the router
 export const OrderRouter = router;
