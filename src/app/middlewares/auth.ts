@@ -8,7 +8,6 @@ import { UserModel } from '../modules/user/user.model';
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req, res, next) => {
-    console.log('Auth middleware running');
     const authHeader = req.headers.authorization;
 
     // checking if the token is missing

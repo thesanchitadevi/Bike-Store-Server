@@ -7,9 +7,6 @@ import { HttpStatus } from 'http-status-ts';
 
 // Function to create a new product
 const createProduct = catchAsync(async (req, res) => {
-  console.log(req.body);
-  console.log(req.file);
-
   const parsedData = {
     ...JSON.parse(req.body.data),
     image: req.file?.path,
