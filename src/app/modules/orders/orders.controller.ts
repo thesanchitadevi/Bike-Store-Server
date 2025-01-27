@@ -3,6 +3,8 @@ import catchAsync from '../../utils/catchAsync';
 import { HttpStatus } from 'http-status-ts';
 import sendResponse from '../../utils/sendResponse';
 import { IUser } from '../user/user.interface';
+import mongoose from 'mongoose';
+import { AppError } from '../../errors/AppError';
 
 /* Controller functions for the product module  */
 
@@ -62,8 +64,15 @@ const getOrder = catchAsync(async (req, res) => {
 
 // Function to get orders by user
 const getOrdersByUser = catchAsync(async (req, res) => {
+  console.log('getOrdersByUser route hit');
   const user = req.user;
+  console.log('User:', user);
+
   const result = await OrdersServices.getOrdersByUserDB(user._id, req.query);
+
+  if (!mongoose.Types.ObjectId.isValid(user._id)) {
+    throw new AppError(HttpStatus.BAD_REQUEST, 'Invalid user ID');
+  }
 
   sendResponse(res, {
     statusCode: HttpStatus.OK,

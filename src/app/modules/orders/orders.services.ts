@@ -31,6 +31,8 @@ const createOrderDB = async (
     totalPrice,
   });
 
+  console.log('Order:', order._id);
+
   // payment gateway integration can be done here
   const shurjopayPayload = {
     amount: totalPrice,
@@ -46,14 +48,11 @@ const createOrderDB = async (
 
   const payment = await orderUtils.makePaymentAsync(shurjopayPayload);
 
-  console.log(payment);
-
   if (payment?.transactionStatus) {
     order = await order.updateOne({
       transaction: {
         id: payment.sp_order_id,
         transactionStatus: payment.transactionStatus,
-        order_id: payment.sp_order_id,
       },
     });
   }
@@ -132,6 +131,8 @@ const getOrdersByUserDB = async (
   userId: string,
   query: Record<string, unknown>,
 ) => {
+  console.log('User ID:', userId);
+
   const ordersQuery = new QueryBuilder(
     OrderModel.find({ user: userId })
       .populate('user', 'name email')
