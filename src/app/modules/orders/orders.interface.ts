@@ -8,7 +8,7 @@ export interface IOrder {
     quantity: number;
   }[];
   totalPrice: number;
-  status: 'pending' | 'paid' | 'failed' | 'cancelled';
+  status: 'Pending' | 'Paid' | 'Failed' | 'Cancelled';
   transaction: {
     id: string;
     transactionStatus: string;

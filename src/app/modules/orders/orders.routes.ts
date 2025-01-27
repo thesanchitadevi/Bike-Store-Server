@@ -15,13 +15,12 @@ router.post(
 );
 
 router.get('/', orderController.getAllOrders);
-
-router.get('/:orderId', orderController.getOrder);
-
 router.get('/my-orders', auth(USER_ROLE.user), orderController.getOrdersByUser);
 
 // verify payment
 router.get('/verify', auth(USER_ROLE.user), orderController.verifyPayment);
+
+router.get('/:orderId', orderController.getOrder);
 
 // Export the router
 export const OrderRouter = router;
