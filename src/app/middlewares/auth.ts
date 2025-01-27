@@ -8,7 +8,17 @@ import { UserModel } from '../modules/user/user.model';
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req, res, next) => {
-    const token = req.headers.authorization;
+    const authHeader = req.headers.authorization;
+
+    // checking if the token is missing
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new AppError(
+        HttpStatus.UNAUTHORIZED,
+        'No authorization token provided',
+      );
+    }
+
+    const token = authHeader.split(' ')[1];
 
     // checking if the token is missing
     if (!token) {

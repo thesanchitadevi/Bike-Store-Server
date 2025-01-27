@@ -18,10 +18,6 @@ const userSchema = new Schema<IUser, IUserStaticModel>(
       required: true,
       select: 0,
     },
-    needsPasswordChange: {
-      type: Boolean,
-      default: true,
-    },
     passwordChangedAt: {
       type: Date,
     },
@@ -30,16 +26,7 @@ const userSchema = new Schema<IUser, IUserStaticModel>(
       enum: ['admin', 'user'],
       default: 'user',
     },
-    status: {
-      type: String,
-      enum: ['active', 'blocked'],
-      default: 'active',
-    },
     isBlocked: {
-      type: Boolean,
-      default: false,
-    },
-    isDeleted: {
       type: Boolean,
       default: false,
     },

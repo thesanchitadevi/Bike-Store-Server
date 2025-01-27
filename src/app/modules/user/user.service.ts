@@ -3,12 +3,10 @@ import { HttpStatus } from 'http-status-ts';
 import config from '../../config';
 import { IUser } from './user.interface';
 import { UserModel } from './user.model';
-
 import mongoose from 'mongoose';
 import { AppError } from '../../errors/AppError';
 import { AdminModel } from '../admin/admin.model';
 import { IAdmin } from '../admin/admin.interface';
-import { generateAdminId } from './user.utils';
 
 // Create admin in database
 const createAdminDB = async (password: string, payload: IAdmin) => {
@@ -26,8 +24,6 @@ const createAdminDB = async (password: string, payload: IAdmin) => {
 
   try {
     session.startTransaction();
-    //set  generated id
-    userData.id = await generateAdminId();
 
     // create a user (transaction-1)
     const newUser = await UserModel.create([userData], { session });
@@ -61,7 +57,7 @@ const createAdminDB = async (password: string, payload: IAdmin) => {
 // Create getMe function
 const getMe = async (userId: string, role: string) => {
   let result = null;
-  if (role === 'cutomer') {
+  if (role === 'user') {
     result = await UserModel.findOne({ id: userId }).populate('user');
   }
   if (role === 'admin') {
@@ -71,16 +67,7 @@ const getMe = async (userId: string, role: string) => {
   return result;
 };
 
-// Change status function
-const changeStatus = async (id: string, payload: { status: string }) => {
-  const result = await UserModel.findByIdAndUpdate(id, payload, {
-    new: true,
-  });
-  return result;
-};
-
 export const UserServices = {
   createAdminDB,
   getMe,
-  changeStatus,
 };

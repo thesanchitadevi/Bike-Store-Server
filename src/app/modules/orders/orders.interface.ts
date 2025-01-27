@@ -19,8 +19,5 @@ export interface IOrder {
     quantity: number;
   }>;
   totalPrice: number;
-  paymentMethod: 'COD' | 'SurjoPay';
-  paymentStatus: 'pending' | 'completed' | 'failed';
-  orderStatus: 'pending' | 'completed' | 'cancelled';
-  deliveryAddress: IDeliveryAddress;
+  orderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 }

@@ -5,12 +5,9 @@ export interface IUser {
   name?: string;
   password: string;
   email: string;
-  needsPasswordChange?: boolean;
   passwordChangedAt?: Date;
   role: 'admin' | 'user';
-  status: 'active' | 'blocked';
   isBlocked: boolean;
-  isDeleted: boolean;
 }
 
 export interface IUserStaticModel extends Model<IUser> {
