@@ -7,7 +7,16 @@ import { HttpStatus } from 'http-status-ts';
 
 // Function to create a new product
 const createProduct = catchAsync(async (req, res) => {
-  const result = await ProductServices.createProductDB(req.body);
+  console.log(req.body);
+  console.log(req.file);
+
+  const parsedData = {
+    ...JSON.parse(req.body.data),
+    image: req.file?.path,
+  };
+  req.body = parsedData;
+
+  const result = await ProductServices.createProductDB(parsedData);
 
   sendResponse(res, {
     statusCode: HttpStatus.CREATED,

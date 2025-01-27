@@ -19,6 +19,7 @@ const productSchema = new Schema<IProduct, ProductStaticMethods>(
       type: Number,
       required: true,
     },
+    image: { type: String, default: null },
     inStock: { type: Boolean, default: true },
   },
   {

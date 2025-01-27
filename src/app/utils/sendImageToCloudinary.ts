@@ -10,15 +10,12 @@ cloudinary.config({
   api_secret: config.cloudinary_api_secret, // Click 'View API Keys' above to copy your API secret
 });
 
-export const sendImageToCloudinary = async (
-  imageName: string,
-  path: string,
-) => {
+export const sendImageToCloudinary = async (image: string, path: string) => {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(
       path,
       {
-        public_id: imageName,
+        public_id: image,
       },
       function (error, result) {
         if (error) {

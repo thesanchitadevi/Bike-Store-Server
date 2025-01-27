@@ -10,6 +10,7 @@ import { ProductModel } from './products.model';
 // Create a new product in the database
 const createProductDB = async (productData: IProduct) => {
   const newProduct = await ProductModel.create(productData);
+
   return newProduct;
 };
 
