@@ -6,6 +6,9 @@ import { OrderValidationSchema } from './orders.validation';
 import { USER_ROLE } from '../user/user.constant';
 const router = express.Router();
 
+// verify payment
+router.get('/verify', auth(USER_ROLE.user), orderController.verifyPayment);
+
 // Routes
 router.post(
   '/',
@@ -14,13 +17,18 @@ router.post(
   orderController.createOrder,
 );
 
-router.get('/', orderController.getAllOrders);
+router.get('/', auth(USER_ROLE.admin), orderController.getAllOrders);
+
 router.get('/my-orders', auth(USER_ROLE.user), orderController.getOrdersByUser);
 
-// verify payment
-router.get('/verify', auth(USER_ROLE.user), orderController.verifyPayment);
-
 router.get('/:orderId', orderController.getOrder);
+
+router.patch(
+  '/:orderId',
+  auth(USER_ROLE.user, USER_ROLE.admin),
+  validateRequest(OrderValidationSchema.updateOrderSchema),
+  orderController.updateOrder,
+);
 
 // Export the router
 export const OrderRouter = router;

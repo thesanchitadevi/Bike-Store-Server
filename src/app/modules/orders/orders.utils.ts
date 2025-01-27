@@ -60,8 +60,6 @@ shurjopay.config(
   config.sp_return_url!,
 );
 
-console.log('Shurjopay configured', shurjopay);
-
 const makePaymentAsync = async (
   paymentPayload: any,
 ): Promise<PaymentResponse> => {

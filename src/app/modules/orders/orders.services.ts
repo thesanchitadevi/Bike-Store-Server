@@ -8,12 +8,14 @@ import {
   orderUtils,
 } from './orders.utils';
 import { IUser } from '../user/user.interface';
+import { IOrder } from './orders.interface';
+import { ProductModel } from '../products/products.model';
 
 /* Database operations for orders */
 
 // Create a new order in the database
 const createOrderDB = async (
-  user: IUser,
+  user: IUser & { _id: string },
   payload: { products: { product: string; quantity: number }[] },
   client_ip: string,
 ) => {
@@ -156,6 +158,108 @@ const getOrdersByUserDB = async (
   };
 };
 
+// Update order
+const updateOrderDB = async (
+  orderId: string,
+  userId: string,
+  role: string,
+  payload: Partial<IOrder>,
+) => {
+  let query;
+
+  if (role === 'admin') {
+    // Admin can update any order
+    query = { _id: orderId };
+  } else {
+    // User can only update their own orders
+    query = { _id: orderId, user: userId };
+  }
+
+  // Define allowed fields for users and admins
+  const update: Partial<IOrder> = {};
+
+  if (role === 'admin') {
+    // Admins can only update orderStatus
+    if (payload.orderStatus) {
+      update.orderStatus = payload.orderStatus;
+    }
+  }
+  // Check for user updates (product quantity updates)
+  if (payload.products && payload.products.length > 0) {
+    let totalPrice = 0;
+
+    for (const item of payload.products) {
+      const product = await ProductModel.findById(item.product);
+
+      if (!product) {
+        throw new AppError(
+          HttpStatus.NOT_FOUND,
+          `Product with ID ${item.product} not found`,
+        );
+      }
+
+      // Find the order to get the existing product quantity
+      const order = await OrderModel.findOne(query);
+      if (!order) {
+        throw new AppError(
+          HttpStatus.NOT_FOUND,
+          'Order not found or you do not have permission to update this order',
+        );
+      }
+
+      const existingProduct = order.products.find(
+        (orderItem) => orderItem.product.toString() === item.product.toString(),
+      );
+
+      const existingQuantity = existingProduct ? existingProduct.quantity : 0;
+
+      const newQuantity = item.quantity;
+
+      // Calculate quantity difference
+      const quantityDifference = newQuantity - existingQuantity;
+
+      if (quantityDifference > 0) {
+        // If quantity is increased, check stock availability
+        if (product.quantity < quantityDifference) {
+          throw new AppError(
+            HttpStatus.BAD_REQUEST,
+            `Insufficient stock for product: ${product.name}`,
+          );
+        }
+        product.quantity -= quantityDifference;
+      } else if (quantityDifference < 0) {
+        // If quantity is decreased, restock the product
+        product.quantity += Math.abs(quantityDifference);
+      }
+
+      // Save the updated product stock
+      await product.save();
+
+      // Recalculate total price
+      totalPrice += product.price * item.quantity;
+    }
+
+    update.products = payload.products;
+    update.totalPrice = totalPrice;
+  }
+
+  // Update the order directly in the database
+  const updatedOrder = await OrderModel.findOneAndUpdate(
+    query,
+    { $set: update },
+    { new: true }, // Return the updated document
+  );
+
+  if (!updatedOrder) {
+    throw new AppError(
+      HttpStatus.NOT_FOUND,
+      'Order not found or you do not have permission to update this order',
+    );
+  }
+
+  return updatedOrder;
+};
+
 // Export the functions to be used in the controller
 export const OrdersServices = {
   createOrderDB,
@@ -163,4 +267,5 @@ export const OrdersServices = {
   verifyPayment,
   getOrderDB,
   getOrdersByUserDB,
+  updateOrderDB,
 };

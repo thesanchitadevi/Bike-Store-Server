@@ -83,6 +83,26 @@ const getOrdersByUser = catchAsync(async (req, res) => {
   });
 });
 
+// Function to update an order
+const updateOrder = catchAsync(async (req, res) => {
+  const { orderId } = req.params;
+  const user = req.user;
+
+  const result = await OrdersServices.updateOrderDB(
+    orderId,
+    user._id,
+    user.role,
+    req.body,
+  );
+
+  sendResponse(res, {
+    statusCode: HttpStatus.OK,
+    success: true,
+    message: 'Order updated successfully',
+    data: result,
+  });
+});
+
 // Export the controller functions
 export const orderController = {
   createOrder,
@@ -90,4 +110,5 @@ export const orderController = {
   getAllOrders,
   getOrder,
   getOrdersByUser,
+  updateOrder,
 };

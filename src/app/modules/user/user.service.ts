@@ -34,7 +34,7 @@ const createAdminDB = async (password: string, payload: IAdmin) => {
     }
     // set id , _id as user
     payload.id = newUser[0].id;
-    payload.user = newUser[0]._id; //reference _id
+    payload.user = newUser[0]._id as mongoose.Types.ObjectId; //reference _id
 
     // create a admin (transaction-2)
     const newAdmin = await AdminModel.create([payload], { session });
