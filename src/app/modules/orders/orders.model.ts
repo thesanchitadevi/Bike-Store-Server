@@ -7,6 +7,7 @@ const OrderSchema = new Schema<IOrder>(
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
     },
     products: [
       {
@@ -27,11 +28,19 @@ const OrderSchema = new Schema<IOrder>(
       required: [true, 'Total price is required'],
       min: [0, 'Total price must be a positive value'],
     },
-
-    orderStatus: {
+    status: {
       type: String,
-      enum: ['pending', 'completed', 'cancelled'],
+      enum: ['pending', 'paid', 'failed', 'cancelled'],
       default: 'pending',
+    },
+    transaction: {
+      id: String,
+      transactionStatus: String,
+      bank_status: String,
+      sp_code: String,
+      sp_message: String,
+      method: String,
+      date_time: String,
     },
   },
   {

@@ -1,23 +1,21 @@
 import { Types } from 'mongoose';
 
-export interface IDeliveryAddress {
-  fullName: string;
-  phone: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  country: string;
-}
-
 // Order interface
 export interface IOrder {
   user: Types.ObjectId;
-  products: Array<{
+  products: {
     product: Types.ObjectId;
     quantity: number;
-  }>;
+  }[];
   totalPrice: number;
-  orderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'paid' | 'failed' | 'cancelled';
+  transaction: {
+    id: string;
+    transactionStatus: string;
+    bank_status: string;
+    sp_code: string;
+    sp_message: string;
+    method: string;
+    date_time: string;
+  };
 }
