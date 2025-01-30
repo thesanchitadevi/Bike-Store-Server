@@ -1,21 +1,18 @@
+import { HttpStatus } from 'http-status-ts';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { UserServices } from './user.service';
-import { HttpStatus } from 'http-status-ts';
 
-const createAdmin = catchAsync(async (req, res) => {
-  const { password, admin: adminData } = req.body;
-
-  const result = await UserServices.createAdminDB(password, adminData);
+const blockUserHandle = catchAsync(async (req, res) => {
+  await UserServices.blockUserHandleFromDB(req.params.userId);
 
   sendResponse(res, {
-    statusCode: HttpStatus.OK,
     success: true,
-    message: 'Admin is created succesfully',
-    data: result,
+    message: 'User blocked successfully',
+    statusCode: HttpStatus.OK,
   });
 });
 
-export const UserControllers = {
-  createAdmin,
+export const userControllers = {
+  blockUserHandle,
 };

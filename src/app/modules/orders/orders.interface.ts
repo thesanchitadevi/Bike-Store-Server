@@ -10,6 +10,11 @@ export interface IOrder {
   totalPrice: number;
   status: 'Pending' | 'Paid' | 'Failed' | 'Cancelled';
   orderStatus: 'Pending' | 'Processing' | 'Shipped' | 'Delivered';
+  deliveryAddress: {
+    fullName: string;
+    address: string;
+    phone: string;
+  };
   transaction: {
     id: string;
     transactionStatus: string;

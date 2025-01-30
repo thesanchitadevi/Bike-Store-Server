@@ -16,27 +16,23 @@ const userSchema = new Schema<IUser, IUserStaticModel>(
     password: {
       type: String,
       required: true,
-      select: 0,
     },
     passwordChangedAt: {
       type: Date,
     },
     role: {
       type: String,
-      enum: ['admin', 'user'],
-      default: 'user',
+      enum: ['admin', 'customer'],
+      default: 'customer',
     },
     phone: {
       type: String,
-      default: 'N/A',
     },
     address: {
       type: String,
-      default: 'N/A',
     },
     city: {
       type: String,
-      default: 'N/A',
     },
     isBlocked: {
       type: Boolean,

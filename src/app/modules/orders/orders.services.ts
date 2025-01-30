@@ -31,6 +31,11 @@ const createOrderDB = async (
     user: user._id,
     products: productDetails,
     totalPrice,
+    deliveryAddress: {
+      fullName: user.name,
+      address: user.address,
+      phone: user.phone,
+    },
   });
 
   console.log('Order:', order._id);

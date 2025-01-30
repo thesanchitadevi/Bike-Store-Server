@@ -17,6 +17,7 @@ const registerUser = async (payload: IUserRegister) => {
   }
 
   const user = await UserModel.create(payload);
+
   return user;
 };
 
@@ -65,7 +66,7 @@ const loginUser = async (payload: ILoginUser) => {
   return {
     accessToken,
     refreshToken,
-    needsPasswordChange: user?.needsPasswordChange,
+    user,
   };
 };
 
@@ -77,20 +78,14 @@ const changePassword = async (
   },
 ) => {
   // check if the user is exists
-  const user = await UserModel.isUserExistsByCustomId(userData.userId);
+  const user = await UserModel.isUserExistsByEmail(userData.email);
   if (!user) {
     throw new AppError(HttpStatus.NOT_FOUND, 'User not found !');
   }
 
-  // check if the user is deleted
-  const isDeletdUser = user?.isDeleted;
-  if (isDeletdUser) {
-    throw new AppError(HttpStatus.NOT_FOUND, 'User is deleted !');
-  }
-
   // checking if the user is blocked
-  const userStatus = user?.status;
-  if (userStatus === 'blocked') {
+
+  if (user.isBlocked) {
     throw new AppError(HttpStatus.FORBIDDEN, 'This user is blocked ! !');
   }
 
@@ -130,23 +125,16 @@ const refreshToken = async (token: string) => {
   // checking if the token is valid
   const decoded = verifyToken(token, config.jwt_refresh_secret as string);
 
-  const { userId, iat } = decoded as JwtPayload;
+  const { email, iat } = decoded as JwtPayload;
 
   // check if the user is exists
-  const user = await UserModel.isUserExistsByCustomId(userId);
+  const user = await UserModel.isUserExistsByEmail(email);
   if (!user) {
     throw new AppError(HttpStatus.NOT_FOUND, 'User not found !');
   }
 
-  // check if the user is deleted
-  const isDeletdUser = user?.isDeleted;
-  if (isDeletdUser) {
-    throw new AppError(HttpStatus.NOT_FOUND, 'User is deleted !');
-  }
-
   // checking if the user is blocked
-  const userStatus = user?.status;
-  if (userStatus === 'blocked') {
+  if (user.isBlocked) {
     throw new AppError(HttpStatus.FORBIDDEN, 'This user is blocked ! !');
   }
 
@@ -161,7 +149,7 @@ const refreshToken = async (token: string) => {
   }
 
   const jwtPayload = {
-    userId: user.id.toString(),
+    email: user.email,
     role: user.role,
   };
 
@@ -176,27 +164,20 @@ const refreshToken = async (token: string) => {
   };
 };
 
-const forgetPassword = async (userId: string) => {
+const forgetPassword = async (email: string) => {
   // check if the user is exists
-  const user = await UserModel.isUserExistsByCustomId(userId);
+  const user = await UserModel.isUserExistsByEmail(email);
   if (!user) {
     throw new AppError(HttpStatus.NOT_FOUND, 'User not found !');
   }
 
-  // check if the user is deleted
-  const isDeletdUser = user?.isDeleted;
-  if (isDeletdUser) {
-    throw new AppError(HttpStatus.NOT_FOUND, 'User is deleted !');
-  }
-
   // checking if the user is blocked
-  const userStatus = user?.status;
-  if (userStatus === 'blocked') {
+  if (user.isBlocked) {
     throw new AppError(HttpStatus.FORBIDDEN, 'This user is blocked ! !');
   }
 
   const jwtPayload = {
-    userId: user.id,
+    email: user.email,
     role: user.role,
   };
 
@@ -213,24 +194,18 @@ const forgetPassword = async (userId: string) => {
 };
 
 const resetPassword = async (
-  payload: { id: string; newPassword: string },
+  payload: { email: string; newPassword: string },
   token: string,
 ) => {
   // check if the user is exists
-  const user = await UserModel.isUserExistsByCustomId(payload?.id);
+  const user = await UserModel.isUserExistsByEmail(payload.email);
   if (!user) {
     throw new AppError(HttpStatus.NOT_FOUND, 'User not found !');
   }
 
-  // check if the user is deleted
-  const isDeletdUser = user?.isDeleted;
-  if (isDeletdUser) {
-    throw new AppError(HttpStatus.NOT_FOUND, 'User is deleted !');
-  }
-
   // checking if the user is blocked
-  const userStatus = user?.status;
-  if (userStatus === 'blocked') {
+
+  if (user.isBlocked) {
     throw new AppError(HttpStatus.FORBIDDEN, 'This user is blocked ! !');
   }
 
@@ -239,7 +214,7 @@ const resetPassword = async (
     config.jwt_access_secret as string,
   ) as JwtPayload;
 
-  if (decoded.userId !== payload.id) {
+  if (decoded.email !== user.email) {
     throw new AppError(HttpStatus.UNAUTHORIZED, 'You are not authorized !');
   }
 

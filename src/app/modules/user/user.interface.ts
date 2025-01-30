@@ -1,12 +1,12 @@
-import { Document, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { USER_ROLE } from './user.constant';
 
-export interface IUser extends Document {
+export interface IUser {
   name?: string;
   password: string;
   email: string;
   passwordChangedAt?: Date;
-  role: 'admin' | 'user';
+  role: 'admin' | 'customer';
   phone?: string;
   city?: string;
   address?: string;
@@ -17,7 +17,7 @@ export interface IUserStaticModel extends Model<IUser> {
   // check if the user is exists by custom id
   isUserExistsByEmail(email: string): Promise<IUser>;
 
-  isEmailTaken(id: string): Promise<IUser>;
+  isEmailTaken(email: string): Promise<IUser>;
 
   // check if password is matched with hashed password
   isPasswordMatched(

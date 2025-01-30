@@ -38,6 +38,20 @@ const OrderSchema = new Schema<IOrder>(
       enum: ['Pending', 'Processing', 'Shipped', 'Delivered'],
       default: 'Pending',
     },
+    deliveryAddress: {
+      fullName: {
+        type: String,
+        required: [true, 'Full name is required'],
+      },
+      address: {
+        type: String,
+        required: [true, 'Address is required'],
+      },
+      phone: {
+        type: String,
+        required: [true, 'Phone number is required'],
+      },
+    },
     transaction: {
       id: String,
       transactionStatus: String,
