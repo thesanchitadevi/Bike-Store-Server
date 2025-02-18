@@ -13,7 +13,7 @@ const moduleRoutes = [
     module: AuthRouter,
   },
   {
-    path: '/admin',
+    path: '/users',
     module: UserRouter,
   },
   {
