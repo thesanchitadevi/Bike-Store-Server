@@ -25,8 +25,17 @@ The API includes the following routes :
 
 ### Order Routes (/api/orders)
 
-- _GET_ `/api/orders/revenue` - The total revenue from all orders.
+- _GET_ `/api/orders` - Retrieve all order.
 - _POST_ `/api/orders` - Place a new order.
+- _GET_ `/api/orders/:orderId` - Retrieve a order's details.
+- _PUT_ `/api/orders/:orderId` - Update a order's details.
+- _DELETE_ `/api/orders/:orderId` - Delete a order.
+
+### Authentication (/api/auth)
+
+- _POST_ `/api/auth/register` - Register as new user/admin.
+- _POST_ `/api/auth/login` - Login user.
+- _POST_ `/api/auth/me` - Retrieve user's details.
 
 ## Technologies Used
 
@@ -35,6 +44,7 @@ The API includes the following routes :
 - Language: **_TypeScript_**
 - Validation: **_Mongoose Custom Validation_**
 - Code Quality Tools: **_ESLint, Prettier_**
+- Image Upload: **_Multer, Cloudinary_**
 
 ## Setup
 
@@ -78,6 +88,8 @@ The project structure follows the MVC pattern. The `src` directory contains the 
   - `modules`: Contains the different modules of the application.
     - `products`: Contains the product module.
     - `orders`: Contains the order module.
+    - `authentication`: Contains the authentication module.
+    - `user`: Contains the user module.
 
 ## Running the Application
 

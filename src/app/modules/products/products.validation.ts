@@ -16,6 +16,13 @@ const createProductValidationSchema = z.object({
       })
       .min(1, 'Brand cannot be empty'),
 
+    model: z
+      .string({
+        required_error: 'Model is required',
+        invalid_type_error: 'Model must be a string',
+      })
+      .min(1, 'Model cannot be empty'),
+
     price: z
       .number({
         required_error: 'Price is required',
@@ -66,6 +73,13 @@ const updateProductValidationSchema = z.object({
         invalid_type_error: 'Brand must be a string',
       })
       .min(1, 'Brand cannot be empty')
+      .optional(),
+
+    model: z
+      .string({
+        invalid_type_error: 'Model must be a string',
+      })
+      .min(1, 'Model cannot be empty')
       .optional(),
 
     price: z

@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 export interface IProduct {
   name: string;
   brand: string;
+  model: string;
   price: number;
   category: 'Mountain' | 'Road' | 'Hybrid' | 'Electric';
   description: string;

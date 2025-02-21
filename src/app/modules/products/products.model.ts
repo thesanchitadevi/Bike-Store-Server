@@ -6,6 +6,7 @@ const productSchema = new Schema<IProduct, ProductStaticMethods>(
   {
     name: { type: String, required: true },
     brand: { type: String, required: true },
+    model: { type: String, required: true },
     price: {
       type: Number,
       required: true,
