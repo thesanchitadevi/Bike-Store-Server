@@ -44,4 +44,10 @@ router.post(
   AuthControllers.resetPassword,
 );
 
+router.get(
+  '/me',
+  auth(USER_ROLE.admin, USER_ROLE.customer),
+  AuthControllers.getMe,
+);
+
 export const AuthRouter = router;

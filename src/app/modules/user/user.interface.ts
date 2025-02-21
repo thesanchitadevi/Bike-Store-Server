@@ -1,7 +1,8 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { USER_ROLE } from './user.constant';
 
 export interface IUser {
+  _id?: Types.ObjectId;
   name?: string;
   password: string;
   email: string;

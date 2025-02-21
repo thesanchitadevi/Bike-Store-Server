@@ -1,6 +1,8 @@
+import { Types } from 'mongoose';
+
 // User registration interface
 export interface IUserRegister {
-  _id?: string;
+  _id?: Types.ObjectId;
   name: string;
   email: string;
   password: string;

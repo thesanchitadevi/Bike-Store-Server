@@ -106,9 +106,9 @@ const updateOrder = catchAsync(async (req, res) => {
 // Function to delete an order
 const deleteOrder = catchAsync(async (req, res) => {
   const { orderId } = req.params;
-  const user = req.user;
+  // const user = req.user;
 
-  await OrdersServices.deleteOrderDB(orderId, user._id);
+  await OrdersServices.deleteOrderDB(orderId);
 
   sendResponse(res, {
     statusCode: HttpStatus.OK,

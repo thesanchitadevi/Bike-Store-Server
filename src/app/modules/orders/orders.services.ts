@@ -266,10 +266,9 @@ const updateOrderDB = async (
 };
 
 // Delete order
-const deleteOrderDB = async (orderId: string, userId: string) => {
-  const order = await OrderModel.findOneAndDelete({
+const deleteOrderDB = async (orderId: string) => {
+  const order = await OrderModel.findByIdAndDelete({
     _id: orderId,
-    user: userId,
   });
 
   if (!order) {

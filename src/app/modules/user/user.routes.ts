@@ -8,10 +8,6 @@ const router = express.Router();
 router.get('/', auth('admin'), userControllers.getAllUsers);
 
 // Block user route - admin only
-router.patch(
-  '/users/:userId/block',
-  auth('admin'),
-  userControllers.blockUserHandle,
-);
+router.patch('/:userId', auth('admin'), userControllers.blockUserHandle);
 
 export const UserRouter = router;

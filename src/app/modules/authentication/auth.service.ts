@@ -45,8 +45,10 @@ const loginUser = async (payload: ILoginUser) => {
   }
 
   const jwtPayload = {
-    email: user.email,
-    role: user.role,
+    name: user?.name,
+    email: user?.email,
+    role: user?.role,
+    userId: user?._id,
   };
 
   // access token
@@ -188,7 +190,7 @@ const forgetPassword = async (email: string) => {
     '10m',
   );
 
-  const resetLink = `${config.reset_paasword_url_link}?id=${user.id}&token=${resetToken}`;
+  const resetLink = `${config.reset_paasword_url_link}?id=${user._id}&token=${resetToken}`;
 
   sendEmail(user.email, resetLink);
 };
@@ -237,6 +239,16 @@ const resetPassword = async (
   );
 };
 
+const getMe = async (userId: string) => {
+  const user = await UserModel.findById(userId);
+
+  if (!user) {
+    throw new AppError(HttpStatus.NOT_FOUND, 'User not found');
+  }
+
+  return user;
+};
+
 export const AuthServices = {
   registerUser,
   loginUser,
@@ -244,4 +256,5 @@ export const AuthServices = {
   refreshToken,
   forgetPassword,
   resetPassword,
+  getMe,
 };
