@@ -23,6 +23,7 @@ app.use(express.json());
 
 // application routes
 app.use('/api', router);
+app.options('*', cors());
 
 // Default route
 const getController = async (req: Request, res: Response) => {
