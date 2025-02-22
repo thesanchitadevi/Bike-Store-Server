@@ -4,13 +4,18 @@ import cors from 'cors';
 import router from './app/routes';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import notFound from './app/middlewares/notFound';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
+app.use(cookieParser());
 //parse application/json
 app.use(
   cors({
-    origin: 'https://bike-store-client-alpha.vercel.app',
+    origin: [
+      'http://localhost:5173',
+      'https://bike-store-client-alpha.vercel.app',
+    ],
     credentials: true,
   }),
 );
