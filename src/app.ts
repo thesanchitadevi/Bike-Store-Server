@@ -9,7 +9,7 @@ const app: Application = express();
 
 //parse application/json
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: 'https://bike-store-client-alpha.vercel.app', credentials: true }));
 
 // application routes
 app.use('/api', router);
