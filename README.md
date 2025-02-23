@@ -11,6 +11,12 @@ The Bike-Store project is a backend application built with Express.js, Mongoose,
 - **_Scalable Design_**: Built with modular architecture for extensibility.
 - **_Code Quality_**: Maintained using ESLint, Prettier, and TypeScript.
 
+# Live URL
+
+-**_Server_**:(https://bike-store-pied.vercel.app)[https://bike-store-pied.vercel.app]
+
+-**_Client_**:(https://bike-store-client-alpha.vercel.app)[https://bike-store-client-alpha.vercel.app]
+
 ## API Endpoints
 
 The API includes the following routes :
