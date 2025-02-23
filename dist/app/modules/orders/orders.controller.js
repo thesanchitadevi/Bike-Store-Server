@@ -8,93 +8,111 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.orderController = void 0;
 const orders_services_1 = require("./orders.services");
+const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
+const http_status_ts_1 = require("http-status-ts");
+const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
+const mongoose_1 = __importDefault(require("mongoose"));
+const AppError_1 = require("../../errors/AppError");
 /* Controller functions for the product module  */
 // Function to place an order
-const placeOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const order = req.body;
-        const newOrder = yield orders_services_1.getOrdersServices.createOrderDB(order);
-        res.status(201).json({
-            message: 'Order created successfully',
-            status: true,
-            data: newOrder,
-        });
+const createOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const payload = req.body;
+    if (!user || !user._id || typeof user._id !== 'string') {
+        throw new AppError_1.AppError(http_status_ts_1.HttpStatus.BAD_REQUEST, 'Invalid user ID');
     }
-    catch (error) {
-        if (error.name === 'ValidationError') {
-            // Map Mongoose validation error to the required structure
-            const validationErrors = Object.keys(error.errors).reduce((acc, key) => {
-                const err = error.errors[key];
-                acc[key] = {
-                    message: err.message,
-                    name: err.name,
-                    properties: {
-                        message: err.message,
-                        type: err.properties.type, // Validation type (e.g., 'required', 'min')
-                        min: err.properties.min, // Minimum value (if applicable)
-                    },
-                    kind: err.kind, // Validation kind (e.g., 'required', 'min')
-                    path: err.path, // Path of the field (e.g., 'price')
-                    value: req.body[key], // The invalid value
-                };
-                return acc;
-            }, {});
-            // Respond with validation errors
-            res.status(400).json({
-                message: 'Validation failed',
-                success: false,
-                error: {
-                    name: error.name,
-                    errors: validationErrors,
-                },
-                stack: process.env.NODE_ENV === 'development' ? error.stack : null,
-            });
-        }
-        // Handle "Resource not found" error
-        if (error.message === 'Resource not found') {
-            const resourceNotFoundError = {
-                resource: error.resource || 'Unknown Resource',
-                message: error.message || 'Resource not found',
-                name: error.name,
-            };
-            res.status(404).json({
-                message: 'Resource not found',
-                success: false,
-                error: {
-                    name: resourceNotFoundError.name,
-                    details: resourceNotFoundError,
-                },
-                stack: process.env.NODE_ENV === 'development' ? error.stack : null,
-            });
-        }
+    const result = yield orders_services_1.OrdersServices.createOrderDB(user, payload, req.ip);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_ts_1.HttpStatus.CREATED,
+        success: true,
+        message: 'Order placed successfully',
+        data: result,
+    });
+}));
+// Function to get all orders
+const getAllOrders = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield orders_services_1.OrdersServices.getAllOrdersDB(req.query);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_ts_1.HttpStatus.OK,
+        success: true,
+        message: 'Orders retrieved successfully',
+        meta: result.meta,
+        data: result.result,
+    });
+}));
+const verifyPayment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const order = yield orders_services_1.OrdersServices.verifyPayment(req.query.order_id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_ts_1.HttpStatus.CREATED,
+        success: true,
+        message: 'Order verified successfully',
+        data: order,
+    });
+}));
+// Function to get an order by ID
+const getOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { orderId } = req.params;
+    const result = yield orders_services_1.OrdersServices.getOrderDB(orderId);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_ts_1.HttpStatus.OK,
+        success: true,
+        message: 'Order retrieved successfully',
+        data: result,
+    });
+}));
+// Function to get orders by user
+const getOrdersByUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('getOrdersByUser route hit');
+    const user = req.user;
+    console.log('User:', user);
+    const result = yield orders_services_1.OrdersServices.getOrdersByUserDB(user._id, req.query);
+    if (!mongoose_1.default.Types.ObjectId.isValid(user._id)) {
+        throw new AppError_1.AppError(http_status_ts_1.HttpStatus.BAD_REQUEST, 'Invalid user ID');
     }
-});
-// Function to get the total revenue
-const getRevenue = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const totalRevenue = yield orders_services_1.getOrdersServices.calculateTotalRevenue();
-        res.status(200).json({
-            message: 'Revenue calculated successfully',
-            status: true,
-            data: {
-                totalRevenue,
-            },
-        });
-    }
-    catch (error) {
-        res.status(500).json({
-            message: 'Error calculating revenue',
-            success: false,
-            error: error.message || 'An unknown error occurred',
-            stack: process.env.NODE_ENV === 'development' ? error.stack : null,
-        });
-    }
-});
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_ts_1.HttpStatus.OK,
+        success: true,
+        message: 'Orders retrieved successfully',
+        meta: result.meta,
+        data: result.result,
+    });
+}));
+// Function to update an order
+const updateOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { orderId } = req.params;
+    const user = req.user;
+    const result = yield orders_services_1.OrdersServices.updateOrderDB(orderId, user._id, user.role, req.body);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_ts_1.HttpStatus.OK,
+        success: true,
+        message: 'Order updated successfully',
+        data: result,
+    });
+}));
+// Function to delete an order
+const deleteOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { orderId } = req.params;
+    // const user = req.user;
+    yield orders_services_1.OrdersServices.deleteOrderDB(orderId);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_ts_1.HttpStatus.OK,
+        success: true,
+        message: 'Order deleted successfully',
+    });
+}));
 // Export the controller functions
 exports.orderController = {
-    placeOrder,
-    getRevenue,
+    createOrder,
+    verifyPayment,
+    getAllOrders,
+    getOrder,
+    getOrdersByUser,
+    updateOrder,
+    deleteOrder,
 };

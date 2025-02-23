@@ -138,7 +138,7 @@ const getOrdersByUserDB = async (
   userId: string,
   query: Record<string, unknown>,
 ) => {
-  console.log('User ID:', userId);
+  // console.log('User ID:', userId);
 
   const ordersQuery = new QueryBuilder(
     OrderModel.find({ user: userId })

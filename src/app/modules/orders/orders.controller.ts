@@ -2,18 +2,26 @@ import { OrdersServices } from './orders.services';
 import catchAsync from '../../utils/catchAsync';
 import { HttpStatus } from 'http-status-ts';
 import sendResponse from '../../utils/sendResponse';
-import { IUser } from '../user/user.interface';
 import mongoose from 'mongoose';
 import { AppError } from '../../errors/AppError';
+import { IUser } from '../user/user.interface';
 
 /* Controller functions for the product module  */
 
 // Function to place an order
 const createOrder = catchAsync(async (req, res) => {
-  const user = req.user as IUser;
+  const user = req.user;
   const payload = req.body;
 
-  const result = await OrdersServices.createOrderDB(user, payload, req.ip!);
+  if (!user || !user._id || typeof user._id !== 'string') {
+    throw new AppError(HttpStatus.BAD_REQUEST, 'Invalid user ID');
+  }
+
+  const result = await OrdersServices.createOrderDB(
+    user as IUser & { _id: string },
+    payload,
+    req.ip!,
+  );
 
   sendResponse(res, {
     statusCode: HttpStatus.CREATED,

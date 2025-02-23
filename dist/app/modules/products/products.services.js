@@ -8,75 +8,65 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProductServices = void 0;
-const products_model_1 = require("../products.model");
+exports.ProductServices = void 0;
+const http_status_ts_1 = require("http-status-ts");
+const AppError_1 = require("../../AppError");
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const products_constant_1 = require("./products.constant");
+const products_model_1 = require("./products.model");
 /* Database operations for products */
 // Create a new product in the database
 const createProductDB = (productData) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const newProduct = yield products_model_1.ProductModel.create(productData);
-        return newProduct;
-    }
-    catch (error) {
-        throw error;
-    }
+    const newProduct = yield products_model_1.ProductModel.create(productData);
+    return newProduct;
 });
 // Get all products from the database
-const getAllProductsDB = (searchTerm) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        let filter = {}; // Default filter for no search term
-        if (searchTerm) {
-            filter = {
-                $or: [
-                    { name: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search for name
-                    { brand: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search for brand
-                    { category: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search for category
-                ],
-            };
-        }
-        const allProducts = yield products_model_1.ProductModel.find(filter);
-        return allProducts;
-    }
-    catch (error) {
-        throw new Error('Error retrieving bikes from the database');
-    }
+const getAllProductsDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const productsQuery = new QueryBuilder_1.default(products_model_1.ProductModel.find(), query)
+        .search(products_constant_1.ProductSearchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+    const meta = yield productsQuery.countTotal();
+    const result = yield productsQuery.modelQuery;
+    return {
+        meta,
+        result,
+    };
 });
 // Get a single product from the database
 const getProductDB = (productId) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const product = yield products_model_1.ProductModel.findOne({ _id: productId });
-        return product;
+    const product = yield products_model_1.ProductModel.findById(productId);
+    if (!product) {
+        throw new AppError_1.AppError(http_status_ts_1.HttpStatus.NOT_FOUND, 'Product not found');
     }
-    catch (error) {
-        throw error;
-    }
+    return product;
 });
 // Update a product in the database
-const updateProductDB = (productId_1, updateData_1, ...args_1) => __awaiter(void 0, [productId_1, updateData_1, ...args_1], void 0, function* (productId, updateData, options = {}) {
-    try {
-        const updatedProduct = yield products_model_1.ProductModel.findByIdAndUpdate({ _id: productId }, // Find product by ID
-        updateData, Object.assign({ new: true }, options));
-        return updatedProduct;
+const updateProductDB = (productId, updateData) => __awaiter(void 0, void 0, void 0, function* () {
+    const updatedProduct = yield products_model_1.ProductModel.findByIdAndUpdate({ _id: productId }, // Find product by ID
+    updateData, // Update the product with the provided data
+    { new: true, runValidators: true });
+    if (!updatedProduct) {
+        throw new AppError_1.AppError(http_status_ts_1.HttpStatus.NOT_FOUND, 'Product not found');
     }
-    catch (error) {
-        throw error;
-    }
+    return updatedProduct;
 });
 // Delete a product from the database
 const deleteProductDB = (productId) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const deletedproduct = yield products_model_1.ProductModel.findByIdAndDelete({
-            _id: productId,
-        });
-        return deletedproduct;
+    const deletedProduct = yield products_model_1.ProductModel.findByIdAndDelete(productId);
+    if (!deletedProduct) {
+        throw new AppError_1.AppError(http_status_ts_1.HttpStatus.NOT_FOUND, 'Product not found');
     }
-    catch (error) {
-        throw error;
-    }
+    return deletedProduct;
 });
 // Export the functions to be used in the controller
-exports.getProductServices = {
+exports.ProductServices = {
     createProductDB,
     getAllProductsDB,
     getProductDB,

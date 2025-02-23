@@ -15,23 +15,21 @@ const mongoose_1 = require("mongoose");
 const productSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     brand: { type: String, required: true },
+    model: { type: String, required: true },
     price: {
         type: Number,
         required: true,
-        min: [0, 'Price must be a positive value'],
     },
     category: {
         type: String,
         enum: ['Mountain', 'Road', 'Hybrid', 'Electric'],
-        message: 'Invalid category',
-        required: true,
     },
     description: { type: String, required: true },
     quantity: {
         type: Number,
         required: true,
-        min: [0, 'Quantity must be greater than or equal to zero'],
     },
+    image: { type: String, default: null },
     inStock: { type: Boolean, default: true },
 }, {
     versionKey: false, // Don't add a version key to the document
@@ -48,7 +46,7 @@ productSchema.statics.isProductExist = function (productId) {
 productSchema.methods.reduceStock = function (orderQuantity) {
     return __awaiter(this, void 0, void 0, function* () {
         if (this.quantity < orderQuantity) {
-            throw new Error('Insufficient stock');
+            throw new Error('Product out of stock');
         }
         this.quantity -= orderQuantity;
         this.inStock = this.quantity > 0;
