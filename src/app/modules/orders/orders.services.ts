@@ -15,7 +15,7 @@ import { ProductModel } from '../products/products.model';
 
 // Create a new order in the database
 const createOrderDB = async (
-  user: IUser & { _id: string },
+  user: IUser,
   payload: { products: { product: string; quantity: number }[] },
   client_ip: string,
 ) => {

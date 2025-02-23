@@ -24,9 +24,6 @@ const AppError_1 = require("../../errors/AppError");
 const createOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     const payload = req.body;
-    if (!user || !user._id || typeof user._id !== 'string') {
-        throw new AppError_1.AppError(http_status_ts_1.HttpStatus.BAD_REQUEST, 'Invalid user ID');
-    }
     const result = yield orders_services_1.OrdersServices.createOrderDB(user, payload, req.ip);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_ts_1.HttpStatus.CREATED,

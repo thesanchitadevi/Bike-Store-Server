@@ -10,18 +10,10 @@ import { IUser } from '../user/user.interface';
 
 // Function to place an order
 const createOrder = catchAsync(async (req, res) => {
-  const user = req.user;
+  const user = req.user as IUser;
   const payload = req.body;
 
-  if (!user || !user._id || typeof user._id !== 'string') {
-    throw new AppError(HttpStatus.BAD_REQUEST, 'Invalid user ID');
-  }
-
-  const result = await OrdersServices.createOrderDB(
-    user as IUser & { _id: string },
-    payload,
-    req.ip!,
-  );
+  const result = await OrdersServices.createOrderDB(user, payload, req.ip!);
 
   sendResponse(res, {
     statusCode: HttpStatus.CREATED,
