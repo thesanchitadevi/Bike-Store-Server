@@ -12,7 +12,10 @@ app.use(cookieParser());
 //parse application/json
 app.use(
   cors({
-    origin: 'https://bike-store-client-alpha.vercel.app',
+    origin: [
+      'https://bike-store-client-alpha.vercel.app',
+      'http://localhost:5173',
+    ],
     credentials: true,
   }),
 );

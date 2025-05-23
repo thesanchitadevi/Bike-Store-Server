@@ -23,7 +23,10 @@ const app = (0, express_1.default)();
 app.use((0, cookie_parser_1.default)());
 //parse application/json
 app.use((0, cors_1.default)({
-    origin: 'https://bike-store-client-alpha.vercel.app',
+    origin: [
+        'https://bike-store-client-alpha.vercel.app',
+        'http://localhost:5173',
+    ],
     credentials: true,
 }));
 app.use(express_1.default.json());
